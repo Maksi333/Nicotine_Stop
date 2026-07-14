@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#14B36B</color>
+    <color name="colorPrimaryDark">#0E8A50</color>
+    <color name="colorAccent">#14B36B</color>
+
+    <!-- Home-screen widget (light) -->
+    <color name="widget_card">#FDFEFD</color>
+    <color name="widget_ink">#17322B</color>
+    <color name="widget_muted">#8AA398</color>
+    <color name="widget_primary">#0E8A50</color>
+    <color name="widget_pill">#EAF7F0</color>
+    <color name="widget_flame">#E8590C</color>
+    <color name="widget_track">#E9F3EC</color>
+</resources>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Nicotine_Stop.Controls"
+             x:Class="Nicotine_Stop.Views.GoalEditPage">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="0">
+
+        <Grid Grid.Row="0" Padding="20,12,20,0" ColumnDefinitions="Auto,*">
+            <Border Grid.Column="0" WidthRequest="38" HeightRequest="38" StrokeThickness="0"
+                    BackgroundColor="{DynamicResource Mint}" StrokeShape="RoundRectangle 19">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnCancel" />
+                </Border.GestureRecognizers>
+                <Label Text="✕" FontFamily="NunitoExtraBold" FontSize="16" TextColor="{DynamicResource Muted}"
+                       HorizontalOptions="Center" VerticalOptions="Center" />
+            </Border>
+            <Label Grid.Column="1" x:Name="TitleLabel" Text="New goal" Style="{StaticResource TabTitle}"
+                   Margin="12,0,0,0" VerticalOptions="Center" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20,20,20,0" Spacing="16">
+
+                <Border StrokeThickness="0" BackgroundColor="{DynamicResource Track}" StrokeShape="RoundRectangle 20"
+                        HeightRequest="150">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnPickPhoto" />
+                    </Border.GestureRecognizers>
+                    <Grid>
+                        <VerticalStackLayout x:Name="PhotoPlaceholder" HorizontalOptions="Center" VerticalOptions="Center" Spacing="4">
+                            <Label Text="🖼️" FontSize="30" HorizontalOptions="Center" Opacity="0.6" />
+                            <Label Text="Add a photo" FontFamily="NunitoExtraBold" FontSize="13" TextColor="{DynamicResource Faint}" />
+                        </VerticalStackLayout>
+                        <Image x:Name="PhotoImage" Aspect="AspectFill" IsVisible="False" />
+                    </Grid>
+                </Border>
+
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="WHAT ARE YOU SAVING FOR?" Style="{StaticResource Overline}" />
+                    <Border HeightRequest="56" Stroke="{DynamicResource CardBorder}" StrokeThickness="1.5"
+                            BackgroundColor="{DynamicResource Card}" StrokeShape="RoundRectangle 16" Padding="14,0">
+                        <Entry x:Name="NameEntry" Placeholder="e.g. PS5 controller" FontFamily="NunitoExtraBold"
+                               FontSize="16" TextColor="{DynamicResource Ink}" VerticalOptions="Center" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="PRICE" Style="{StaticResource Overline}" />
+                    <Border HeightRequest="56" Stroke="{DynamicResource CardBorder}" StrokeThickness="1.5"
+                            BackgroundColor="{DynamicResource Card}" StrokeShape="RoundRectangle 16" Padding="14,0">
+                        <Entry x:Name="PriceEntry" Placeholder="0" Keyboard="Numeric" FontFamily="NunitoExtraBold"
+                               FontSize="16" TextColor="{DynamicResource Ink}" VerticalOptions="Center" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <Label x:Name="DeleteLabel" Text="Delete this goal" FontFamily="NunitoExtraBold" FontSize="14"
+                       TextColor="{DynamicResource CoralText}" HorizontalOptions="Center" Margin="0,8,0,0" IsVisible="False">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnDelete" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <controls:ChunkyButton x:Name="SaveBtn" Grid.Row="2" Margin="20,12,20,18" Text="Save goal"
+                               Fill="{DynamicResource Primary}" ShadowColor="{DynamicResource PrimaryPressed}" />
+    </Grid>
+</ContentPage>

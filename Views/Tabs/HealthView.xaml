@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Nicotine_Stop.Controls"
+             x:Class="Nicotine_Stop.Views.Tabs.HealthView"
+             x:Name="Root">
+
+    <ContentView.Resources>
+        <controls:InverseBoolConverter x:Key="InvBool" />
+    </ContentView.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
+
+            <!-- Header + recovery donut -->
+            <Grid Padding="20,12,20,0" ColumnDefinitions="*,Auto" ColumnSpacing="14">
+                <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
+                    <Label Text="Health" Style="{StaticResource TabTitle}" />
+                    <Label Text="Your body is repairing itself right now." FontFamily="NunitoBold"
+                           FontSize="13" TextColor="{DynamicResource Muted}" />
+                </VerticalStackLayout>
+                <Grid Grid.Column="1" WidthRequest="74" HeightRequest="74">
+                    <controls:ProgressRing WidthRequest="74" HeightRequest="74" StrokeWidth="9"
+                                           Progress="{Binding Recovery}" TrackColor="{DynamicResource Track}"
+                                           FillColor="#FF6B5E" />
+                    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="0">
+                        <Label Text="{Binding RecoveryPercentStr}" FontFamily="NunitoBlack" FontSize="16"
+                               TextColor="{DynamicResource CoralText}" HorizontalTextAlignment="Center" />
+                        <Label Text="RECOVERED" FontFamily="NunitoBlack" FontSize="7.5" CharacterSpacing="0.5"
+                               TextColor="{DynamicResource Faint}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Grid>
+
+            <!-- Timeline -->
+            <VerticalStackLayout Padding="20,14,20,8" Spacing="0"
+                                 BindableLayout.ItemsSource="{Binding Milestones}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="30,*" ColumnSpacing="14">
+
+                            <!-- Node + connector -->
+                            <Grid Grid.Column="0" RowDefinitions="Auto,*">
+                                <Border WidthRequest="26" HeightRequest="26" StrokeThickness="0"
+                                        BackgroundColor="{DynamicResource Track}" StrokeShape="RoundRectangle 13">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsDone}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="#14B36B" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsInProgress}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="{DynamicResource Card}" />
+                                            <Setter Property="Stroke" Value="#14B36B" />
+                                            <Setter Property="StrokeThickness" Value="3" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Grid>
+                                        <Label Text="✓" FontFamily="NunitoBlack" FontSize="13" TextColor="White"
+                                               HorizontalOptions="Center" VerticalOptions="Center" IsVisible="{Binding IsDone}" />
+                                        <Border WidthRequest="8" HeightRequest="8" StrokeThickness="0" BackgroundColor="#14B36B"
+                                                StrokeShape="RoundRectangle 4" HorizontalOptions="Center" VerticalOptions="Center"
+                                                IsVisible="{Binding IsInProgress}" />
+                                        <Label Text="🔒" FontSize="11" HorizontalOptions="Center" VerticalOptions="Center"
+                                               IsVisible="{Binding IsLocked}" />
+                                    </Grid>
+                                </Border>
+                                <BoxView Grid.Row="1" WidthRequest="3" Color="{DynamicResource Track}" HorizontalOptions="Center"
+                                         IsVisible="{Binding IsLast, Converter={StaticResource InvBool}}">
+                                    <BoxView.Triggers>
+                                        <DataTrigger TargetType="BoxView" Binding="{Binding IsDone}" Value="True">
+                                            <Setter Property="Color" Value="#14B36B" />
+                                        </DataTrigger>
+                                    </BoxView.Triggers>
+                                </BoxView>
+                            </Grid>
+
+                            <!-- Content -->
+                            <Grid Grid.Column="1" Padding="0,2,0,12">
+                                <!-- plain (done / locked) -->
+                                <VerticalStackLayout Spacing="2" IsVisible="{Binding IsInProgress, Converter={StaticResource InvBool}}">
+                                    <VerticalStackLayout.Triggers>
+                                        <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding IsLocked}" Value="True">
+                                            <Setter Property="Opacity" Value="0.62" />
+                                        </DataTrigger>
+                                    </VerticalStackLayout.Triggers>
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Label Text="{Binding Title}" FontFamily="NunitoBlack" FontSize="14.5" TextColor="{DynamicResource Ink}" />
+                                        <Label Text="{Binding StateLabel}" FontFamily="NunitoBlack" FontSize="11"
+                                               TextColor="{DynamicResource PrimaryText}" VerticalOptions="Center" IsVisible="{Binding IsDone}" />
+                                    </HorizontalStackLayout>
+                                    <Label Text="{Binding Body}" FontFamily="NunitoBold" FontSize="12.5" TextColor="{DynamicResource Muted}" />
+                                </VerticalStackLayout>
+
+                                <!-- in-progress card -->
+                                <Border IsVisible="{Binding IsInProgress}" BackgroundColor="{DynamicResource Card}"
+                                        Stroke="#14B36B" StrokeThickness="2" StrokeShape="RoundRectangle 16" Padding="14,12">
+                                    <VerticalStackLayout Spacing="2">
+                                        <HorizontalStackLayout Spacing="8">
+                                            <Label Text="{Binding Title}" FontFamily="NunitoBlack" FontSize="14.5" TextColor="{DynamicResource Ink}" />
+                                            <Label Text="IN PROGRESS" FontFamily="NunitoBlack" FontSize="11"
+                                                   TextColor="{DynamicResource PrimaryText}" VerticalOptions="Center" />
+                                        </HorizontalStackLayout>
+                                        <Label Text="{Binding Body}" FontFamily="NunitoBold" FontSize="12.5" TextColor="{DynamicResource Muted}" />
+                                        <ProgressBar Progress="{Binding ProgressFraction}" ProgressColor="#14B36B" Margin="0,6,0,0" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <BoxView HeightRequest="12" Color="Transparent" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentView>

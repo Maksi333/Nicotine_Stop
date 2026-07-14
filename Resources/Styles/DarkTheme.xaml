@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- SnusStop dark theme tokens (spec §6). Keys must mirror LightTheme.xaml exactly. -->
+<ResourceDictionary
+    x:Class="Nicotine_Stop.Resources.Styles.DarkTheme"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- Surfaces -->
+    <Color x:Key="Bg">#10201B</Color>
+    <Color x:Key="Card">#1A2E27</Color>
+    <Color x:Key="CardBorder">#23453A</Color>
+    <Color x:Key="Hairline">#23453A</Color>
+    <Color x:Key="HairlineStrong">#23453A</Color>
+    <Color x:Key="Nav">#152922</Color>
+    <Color x:Key="NavBorder">#23453A</Color>
+
+    <!-- Text -->
+    <Color x:Key="Ink">#ECF6F0</Color>
+    <Color x:Key="Muted">#92AC9F</Color>
+    <Color x:Key="Faint">#92AC9F</Color>
+    <Color x:Key="Disabled">#6F8A7D</Color>
+
+    <!-- Primary green (fills stay #14B36B; text/active brightens to #2BD98A) -->
+    <Color x:Key="Primary">#14B36B</Color>
+    <Color x:Key="PrimaryText">#2BD98A</Color>
+    <Color x:Key="PrimaryPressed">#0E8A50</Color>
+    <Color x:Key="PrimaryDeepPressed">#0A6B4A</Color>
+    <Color x:Key="OnPrimary">#FFFFFF</Color>
+    <Color x:Key="MintDeep">#BDF0D4</Color>
+    <Color x:Key="Mint">#15382B</Color>
+    <Color x:Key="Track">#23453A</Color>
+
+    <!-- Coral -->
+    <Color x:Key="Coral">#FF6B5E</Color>
+    <Color x:Key="CoralShadow">#B23A31</Color>
+    <Color x:Key="CoralTint">#2A2320</Color>
+    <Color x:Key="CoralTintStrong">#4A2E2A</Color>
+    <Color x:Key="CoralText">#FF8A7E</Color>
+
+    <!-- Gold -->
+    <Color x:Key="Gold">#FFB627</Color>
+    <Color x:Key="GoldShadow">#D8940D</Color>
+    <Color x:Key="GoldTint">#2E2A18</Color>
+    <Color x:Key="GoldTrack">#2E2A18</Color>
+    <Color x:Key="GoldText">#FFD98A</Color>
+    <Color x:Key="GoldTextDeep">#D8A93C</Color>
+
+    <!-- Lavender + Blue (same brand hues both themes) -->
+    <Color x:Key="Lavender">#8B7CF6</Color>
+    <Color x:Key="LavenderShadow">#6C5CE0</Color>
+    <Color x:Key="LavenderTint">#F0EDFC</Color>
+    <Color x:Key="Blue">#4C9EF5</Color>
+    <Color x:Key="BlueShadow">#2E75C4</Color>
+    <Color x:Key="BlueTint">#EAF3FD</Color>
+
+    <!-- Accents -->
+    <Color x:Key="Cheeks">#FFB1A6</Color>
+    <Color x:Key="Flame">#FF9D66</Color>
+    <Color x:Key="SosBg">#232140</Color>
+    <Color x:Key="ReasonsBg">#0E3B2A</Color>
+
+    <!-- Calendar legend -->
+    <Color x:Key="CleanDay">#1F5C41</Color>
+    <Color x:Key="CleanDayText">#ECF6F0</Color>
+    <Color x:Key="CalCraving">#FFB627</Color>
+    <Color x:Key="CalSlip">#FFD1CC</Color>
+
+</ResourceDictionary>

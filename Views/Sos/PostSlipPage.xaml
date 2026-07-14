@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Nicotine_Stop.Controls"
+             x:Class="Nicotine_Stop.Views.Sos.PostSlipPage"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid Padding="22,0,22,18" RowDefinitions="*,Auto">
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout VerticalOptions="Center" Spacing="0">
+                <controls:PuffMascot Diameter="88" Float="True" HorizontalOptions="Center" Margin="0,10,0,0" />
+                <Label Text="Day 1 of your&#10;next streak." Style="{StaticResource H2}"
+                       HorizontalTextAlignment="Center" Margin="0,14,0,0" />
+                <Label x:Name="RetainedLabel" FontFamily="Nunito" FontSize="14.5" TextColor="{DynamicResource Muted}"
+                       HorizontalTextAlignment="Center" Margin="0,8,0,0" MaximumWidthRequest="300" HorizontalOptions="Center" />
+
+                <Border Style="{StaticResource Card}" StrokeShape="RoundRectangle 20" Padding="16,16" Margin="0,20,0,0">
+                    <VerticalStackLayout Spacing="0">
+                        <Label Text="💡 YOUR TRIGGER PATTERNS" Style="{StaticResource Overline}" />
+                        <VerticalStackLayout x:Name="PatternsHost" Spacing="10" Margin="0,12,0,0" />
+                        <Border BackgroundColor="{DynamicResource Mint}" StrokeThickness="0" StrokeShape="RoundRectangle 14"
+                                Padding="14,11" Margin="0,12,0,0">
+                            <Label x:Name="TipLabel" FontFamily="NunitoBold" FontSize="13" TextColor="#2E5C4B" />
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <controls:ChunkyButton Grid.Row="1" x:Name="StartBtn" Text="Start day 1 💪" Margin="0,12,0,0"
+                               Fill="#14B36B" ShadowColor="#0E8A50" />
+    </Grid>
+</ContentPage>

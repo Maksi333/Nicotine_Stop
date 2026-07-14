@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Nicotine_Stop.Controls"
+             x:Class="Nicotine_Stop.Views.SettingsPage"
+             NavigationPage.HasNavigationBar="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="0,0,0,24">
+
+            <Grid Padding="20,12,20,0" ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                <Border Grid.Column="0" WidthRequest="38" HeightRequest="38" StrokeThickness="0"
+                        BackgroundColor="{DynamicResource Mint}" StrokeShape="RoundRectangle 19">
+                    <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnClose" /></Border.GestureRecognizers>
+                    <Label Text="‹" FontFamily="NunitoExtraBold" FontSize="18" TextColor="{DynamicResource Muted}" HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+                <Label Grid.Column="1" Text="Settings" Style="{StaticResource TabTitle}" VerticalOptions="Center" />
+            </Grid>
+
+            <VerticalStackLayout Padding="20,16,20,0" Spacing="16">
+
+                <!-- MY QUIT PLAN -->
+                <VerticalStackLayout Spacing="7">
+                    <Label Text="MY QUIT PLAN" Style="{StaticResource Overline}" />
+                    <Border Style="{StaticResource Card}" Padding="0" StrokeShape="RoundRectangle 18">
+                        <VerticalStackLayout>
+                            <Grid Padding="16,13" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                <Label Grid.Column="0" Text="📅" FontSize="17" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="Quit date &amp; time" FontFamily="NunitoExtraBold" FontSize="14" TextColor="{DynamicResource Ink}" VerticalOptions="Center" />
+                                <HorizontalStackLayout Grid.Column="2" Spacing="2" VerticalOptions="Center">
+                                    <DatePicker x:Name="QuitDatePicker" Format="dd MMM" FontFamily="NunitoExtraBold" FontSize="13" TextColor="{DynamicResource Faint}" />
+                                    <TimePicker x:Name="QuitTimePicker" Format="HH:mm" FontFamily="NunitoExtraBold" FontSize="13" TextColor="{DynamicResource Faint}" />
+                                </HorizontalStackLayout>
+                            </Grid>
+                            <BoxView HeightRequest="1.5" Color="{DynamicResource Hairline}" />
+                            <Grid Padding="16,13" ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
+                                <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnEditUsage" /></Grid.GestureRecognizers>
+                                <Label Grid.Column="0" Text="📦" FontSize="17" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="Usage before quitting" FontFamily="NunitoExtraBold" FontSize="14" TextColor="{DynamicResource Ink}" VerticalOptions="Center" />
+                                <Label Grid.Column="2" Text="{Binding UsageStr}" FontFamily="NunitoExtraBold" FontSize="13" TextColor="{DynamicResource Faint}" VerticalOptions="Center" />
+                                <Label Grid.Column="3" Text="›" FontFamily="NunitoBlack" TextColor="{DynamicResource Disabled}" VerticalOptions="Center" />
+                            </Grid>
+                            <BoxView HeightRequest="1.5" Color="{DynamicResource Hairline}" />
+                            <Grid Padding="16,13" ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
+                                <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnEditPrice" /></Grid.GestureRecognizers>
+                                <Label Grid.Column="0" Text="💰" FontSize="17" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="Price per can" FontFamily="NunitoExtraBold" FontSize="14" TextColor="{DynamicResource Ink}" VerticalOptions="Center" />
+                                <Label Grid.Column="2" Text="{Binding PriceStr}" FontFamily="NunitoExtraBold" FontSize="13" TextColor="{DynamicResource Faint}" VerticalOptions="Center" />
+                                <Label Grid.Column="3" Text="›" FontFamily="NunitoBlack" TextColor="{DynamicResource Disabled}" VerticalOptions="Center" />
+                            </Grid>
+                            <BoxView HeightRequest="1.5" Color="{DynamicResource Hairline}" />
+                            <Grid Padding="16,13" ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
+                                <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnEditCurrency" /></Grid.GestureRecognizers>
+                                <Label Grid.Column="0" Text="🌍" FontSize="17" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="Currency" FontFamily="NunitoExtraBold" FontSize="14" TextColor="{DynamicResource Ink}" VerticalOptions="Center" />
+                                <Label Grid.Column="2" Text="{Binding CurrencyStr}" FontFamily="NunitoExtraBold" FontSize="13" TextColor="{DynamicResource Faint}" VerticalOptions="Center" />
+                                <Label Grid.Column="3" Text="›" FontFamily="NunitoBlack" TextColor="{DynamicResource Disabled}" VerticalOptions="Center" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- NOTIFICATIONS -->
+                <VerticalStackLayout Spacing="7">
+                    <Label Text="NOTIFICATIONS" Style="{StaticResource Overline}" />
+                    <Border Style="{StaticResource Card}" Padding="0" StrokeShape="RoundRectangle 18">
+                        <VerticalStackLayout>
+                            <Grid Padding="16,13" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                <Label Grid.Column="0" Text="🏆" FontSize="17" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="Milestone unlocked" FontFamily="NunitoExtraBold" FontSize="14" TextColor="{DynamicResource Ink}" VerticalOptions="Center" />
+                                <controls:PillToggle Grid.Column="2" IsToggled="{Binding Milestone}" VerticalOptions="Center" />
+                            </Grid>
+                            <BoxView HeightRequest="1.5" Color="{DynamicResource Hairline}" />
+                            <Grid Padding="16,13" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                <Label Grid.Column="0" Text="☀️" FontSize="17" VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="Daily encouragement" FontFamily="NunitoExtraBold" FontSize="14" TextColor="{DynamicResource Ink}" />
+                                    <Label Text="Every morning at 08:00" FontFamily="NunitoBold" FontSize="11.5" TextColor="{DynamicResource Faint}" />
+                                </VerticalStackLayout>
+                                <controls:PillToggle Grid.Column="2" IsToggled="{Binding Daily}" VerticalOptions="Center" />
+                            </Grid>
+                            <BoxView HeightRequest="1.5" Color="{DynamicResource Hairline}" />
+                            <Grid Padding="16,13" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                <Label Grid.Column="0" Text="📊" FontSize="17" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="Weekly progress summary" FontFamily="NunitoExtraBold" FontSize="14" TextColor="{DynamicResource Ink}" VerticalOptions="Center" />
+                                <controls:PillToggle Grid.Column="2" IsToggled="{Binding Weekly}" VerticalOptions="Center" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- DATA -->
+                <VerticalStackLayout Spacing="7">
+                    <Label Text="DATA" Style="{StaticResource Overline}" />
+                    <Border Style="{StaticResource Card}" Padding="0" StrokeShape="RoundRectangle 18">
+                        <VerticalStackLayout>
+                            <Grid Padding="16,13" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnExport" /></Grid.GestureRecognizers>
+                                <Label Grid.Column="0" Text="📤" FontSize="17" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="Export my data (CSV)" FontFamily="NunitoExtraBold" FontSize="14" TextColor="{DynamicResource Ink}" VerticalOptions="Center" />
+                                <Label Grid.Column="2" Text="›" FontFamily="NunitoBlack" TextColor="{DynamicResource Disabled}" VerticalOptions="Center" />
+                            </Grid>
+                            <BoxView HeightRequest="1.5" Color="{DynamicResource Hairline}" />
+                            <Grid Padding="16,13" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                <Grid.GestureRecognizers><TapGestureRecognizer Tapped="OnReset" /></Grid.GestureRecognizers>
+                                <Label Grid.Column="0" Text="🗑️" FontSize="17" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="Reset all progress" FontFamily="NunitoExtraBold" FontSize="14" TextColor="{DynamicResource CoralText}" VerticalOptions="Center" />
+                                <Label Grid.Column="2" Text="›" FontFamily="NunitoBlack" TextColor="#EFC0BB" VerticalOptions="Center" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+
+                <Label Text="SnusStop 1.0 · Made with 💚 in Denmark" FontFamily="NunitoBold" FontSize="11.5"
+                       TextColor="{DynamicResource Disabled}" HorizontalTextAlignment="Center" Margin="0,8,0,0" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

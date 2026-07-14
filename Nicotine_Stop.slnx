@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Nicotine_Stop.csproj" />
+  <Project Path="SnusStop.Core.Tests/SnusStop.Core.Tests.csproj" />
+  <Project Path="SnusStop.Core/SnusStop.Core.csproj" />
+</Solution>

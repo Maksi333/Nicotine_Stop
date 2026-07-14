@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Nicotine_Stop.Views.Sos.SosTakeoverPage"
+             BackgroundColor="#232140"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid Padding="22,0,22,18" RowDefinitions="Auto,Auto,*,Auto">
+
+        <Border Grid.Row="0" WidthRequest="38" HeightRequest="38" StrokeThickness="0" HorizontalOptions="End"
+                Margin="0,10,0,0" BackgroundColor="#1AFFFFFF" StrokeShape="RoundRectangle 19">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnClose" />
+            </Border.GestureRecognizers>
+            <Label Text="✕" FontFamily="NunitoExtraBold" FontSize="16" TextColor="#B9B4E3"
+                   HorizontalOptions="Center" VerticalOptions="Center" />
+        </Border>
+
+        <VerticalStackLayout Grid.Row="1" Spacing="8" Padding="0,8,0,0">
+            <Label Text="You've got this." FontFamily="NunitoBlack" FontSize="27" TextColor="#F2F1FA"
+                   HorizontalTextAlignment="Center" />
+            <Label Text="Cravings feel huge but usually pass in 3–5 minutes. Pick a way to ride it out."
+                   FontFamily="NunitoBold" FontSize="14.5" TextColor="#B9B4E3" HorizontalTextAlignment="Center"
+                   MaximumWidthRequest="290" HorizontalOptions="Center" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Row="2" Spacing="12" VerticalOptions="Center">
+
+            <Border StrokeThickness="0" BackgroundColor="#8B7CF6" StrokeShape="RoundRectangle 20" Padding="18,18"
+                    Shadow="{x:Null}">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnBreathe" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="46,*,Auto" ColumnSpacing="14">
+                    <Border Grid.Column="0" WidthRequest="46" HeightRequest="46" StrokeThickness="0"
+                            BackgroundColor="#38FFFFFF" StrokeShape="RoundRectangle 23">
+                        <Border WidthRequest="20" HeightRequest="20" StrokeThickness="0" BackgroundColor="White"
+                                StrokeShape="RoundRectangle 10" HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                        <Label Text="Breathe" FontFamily="NunitoBlack" FontSize="17" TextColor="White" />
+                        <Label Text="4-7-8 guided breathing · 2 min" FontFamily="NunitoBold" FontSize="12.5" TextColor="#E4E0FB" />
+                    </VerticalStackLayout>
+                    <Label Grid.Column="2" Text="›" FontFamily="NunitoBlack" FontSize="18" TextColor="White" VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <Border StrokeThickness="0" BackgroundColor="#4C9EF5" StrokeShape="RoundRectangle 20" Padding="18,18">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnDistract" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="46,*,Auto" ColumnSpacing="14">
+                    <Border Grid.Column="0" WidthRequest="46" HeightRequest="46" StrokeThickness="0"
+                            BackgroundColor="#38FFFFFF" StrokeShape="RoundRectangle 14">
+                        <Label Text="🎲" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                        <Label Text="Distract me" FontFamily="NunitoBlack" FontSize="17" TextColor="White" />
+                        <Label Text="A quick game to reset your brain" FontFamily="NunitoBold" FontSize="12.5" TextColor="#DCEBFD" />
+                    </VerticalStackLayout>
+                    <Label Grid.Column="2" Text="›" FontFamily="NunitoBlack" FontSize="18" TextColor="White" VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <Border StrokeThickness="0" BackgroundColor="#14B36B" StrokeShape="RoundRectangle 20" Padding="18,18">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnRemind" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="46,*,Auto" ColumnSpacing="14">
+                    <Border Grid.Column="0" WidthRequest="46" HeightRequest="46" StrokeThickness="0"
+                            BackgroundColor="#38FFFFFF" StrokeShape="RoundRectangle 14">
+                        <Label Text="💚" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                        <Label Text="Remind me why" FontFamily="NunitoBlack" FontSize="17" TextColor="White" />
+                        <Label Text="Your reasons + what you're saving for" FontFamily="NunitoBold" FontSize="12.5" TextColor="#D9F5E6" />
+                    </VerticalStackLayout>
+                    <Label Grid.Column="2" Text="›" FontFamily="NunitoBlack" FontSize="18" TextColor="White" VerticalOptions="Center" />
+                </Grid>
+            </Border>
+        </VerticalStackLayout>
+
+        <Border Grid.Row="3" StrokeThickness="0" BackgroundColor="#14FFFFFF" StrokeShape="RoundRectangle 14"
+                Padding="18,11" HorizontalOptions="Center">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnSlipped" />
+            </Border.GestureRecognizers>
+            <Label Text="I slipped — log it, no shame" FontFamily="NunitoExtraBold" FontSize="13.5" TextColor="#B9B4E3" />
+        </Border>
+    </Grid>
+</ContentPage>

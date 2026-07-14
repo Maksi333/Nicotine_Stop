@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Nicotine_Stop.Views.Games.MinesweeperPage"
+             BackgroundColor="#232140"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid Padding="22,0,22,18" RowDefinitions="Auto,Auto,*,Auto,Auto">
+
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="0,10,0,0">
+            <Border Grid.Column="0" WidthRequest="38" HeightRequest="38" StrokeThickness="0" BackgroundColor="#1AFFFFFF" StrokeShape="RoundRectangle 19">
+                <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnBack" /></Border.GestureRecognizers>
+                <Label Text="‹" FontFamily="NunitoExtraBold" FontSize="18" TextColor="#B9B4E3" HorizontalOptions="Center" VerticalOptions="Center" />
+            </Border>
+            <Label Grid.Column="1" Text="MINESWEEPER" FontFamily="NunitoBlack" FontSize="14" CharacterSpacing="1" TextColor="#B9B4E3" HorizontalOptions="Center" VerticalOptions="Center" />
+            <Border Grid.Column="2" WidthRequest="38" HeightRequest="38" StrokeThickness="0" BackgroundColor="#1AFFFFFF" StrokeShape="RoundRectangle 19">
+                <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnRestart" /></Border.GestureRecognizers>
+                <Label Text="↺" FontFamily="NunitoExtraBold" FontSize="16" TextColor="#F2F1FA" HorizontalOptions="Center" VerticalOptions="Center" />
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="10" Padding="0,14,0,0">
+            <Border Grid.Column="0" StrokeThickness="0" BackgroundColor="#14FFFFFF" StrokeShape="RoundRectangle 16" Padding="14,10">
+                <HorizontalStackLayout Spacing="8">
+                    <Label Text="💣" FontSize="16" VerticalOptions="Center" />
+                    <VerticalStackLayout>
+                        <Label x:Name="MinesLabel" Text="10" FontFamily="NunitoBlack" FontSize="17" TextColor="#F2F1FA" />
+                        <Label Text="MINES LEFT" FontFamily="NunitoExtraBold" FontSize="10" TextColor="#B9B4E3" />
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+            </Border>
+            <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="#14FFFFFF" StrokeShape="RoundRectangle 16" Padding="14,10">
+                <HorizontalStackLayout Spacing="8">
+                    <Label Text="⏱️" FontSize="16" VerticalOptions="Center" />
+                    <VerticalStackLayout>
+                        <Label x:Name="TimerLabel" Text="00:00" FontFamily="NunitoBlack" FontSize="17" TextColor="#F2F1FA" />
+                        <Label Text="CRAVING FADING…" FontFamily="NunitoExtraBold" FontSize="10" TextColor="#B9B4E3" />
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2" StrokeThickness="0" BackgroundColor="#40000000" StrokeShape="RoundRectangle 20" Padding="10" VerticalOptions="Center">
+            <Grid x:Name="Board" RowSpacing="4" ColumnSpacing="4" />
+        </Border>
+
+        <Grid Grid.Row="3" ColumnDefinitions="*,*" ColumnSpacing="10" Padding="0,14,0,0">
+            <Border x:Name="DigBtn" Grid.Column="0" HeightRequest="50" StrokeThickness="0" BackgroundColor="#8B7CF6" StrokeShape="RoundRectangle 16">
+                <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnDigMode" /></Border.GestureRecognizers>
+                <Label Text="⛏️ Dig" FontFamily="NunitoBlack" FontSize="14" TextColor="White" HorizontalOptions="Center" VerticalOptions="Center" />
+            </Border>
+            <Border x:Name="FlagBtn" Grid.Column="1" HeightRequest="50" StrokeThickness="0" BackgroundColor="#1AFFFFFF" StrokeShape="RoundRectangle 16">
+                <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnFlagMode" /></Border.GestureRecognizers>
+                <Label Text="🚩 Flag" FontFamily="NunitoBlack" FontSize="14" TextColor="#E4E0FB" HorizontalOptions="Center" VerticalOptions="Center" />
+            </Border>
+        </Grid>
+
+        <Label Grid.Row="4" x:Name="StatusLabel" Margin="0,12,0,0" HorizontalTextAlignment="Center" FontFamily="NunitoExtraBold" FontSize="12.5" TextColor="#B9B4E3">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="The craving passed — " />
+                    <Span Text="I'm okay ›" TextColor="White" />
+                </FormattedString>
+            </Label.FormattedText>
+            <Label.GestureRecognizers><TapGestureRecognizer Tapped="OnOkay" /></Label.GestureRecognizers>
+        </Label>
+    </Grid>
+</ContentPage>

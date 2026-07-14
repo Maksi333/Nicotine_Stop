@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Nicotine_Stop.Controls"
+             x:Class="Nicotine_Stop.Views.Sos.RemindWhyPage"
+             BackgroundColor="#0E3B2A"
+             NavigationPage.HasNavigationBar="False">
+
+    <Grid Padding="22,0,22,18" RowDefinitions="Auto,Auto,*,Auto">
+
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="0,10,0,0">
+            <Border Grid.Column="0" WidthRequest="38" HeightRequest="38" StrokeThickness="0"
+                    BackgroundColor="#1AFFFFFF" StrokeShape="RoundRectangle 19">
+                <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnBack" /></Border.GestureRecognizers>
+                <Label Text="‹" FontFamily="NunitoExtraBold" FontSize="18" TextColor="#9FCDB8"
+                       HorizontalOptions="Center" VerticalOptions="Center" />
+            </Border>
+            <Label Grid.Column="1" Text="YOUR REASONS" FontFamily="NunitoBlack" FontSize="14" CharacterSpacing="1"
+                   TextColor="#9FCDB8" HorizontalOptions="Center" VerticalOptions="Center" />
+        </Grid>
+
+        <Label Grid.Row="1" Text="You wrote these&#10;for this exact moment." FontFamily="NunitoBlack" FontSize="25"
+               TextColor="#ECF6F0" HorizontalTextAlignment="Center" Padding="0,16,0,0" />
+
+        <ScrollView Grid.Row="2">
+            <VerticalStackLayout x:Name="ReasonsHost" Spacing="12" VerticalOptions="Center" Padding="0,16" />
+        </ScrollView>
+
+        <controls:ChunkyButton Grid.Row="3" x:Name="OkayBtn" Text="I'm okay now 💚" FontSize="16"
+                               Fill="#14B36B" ShadowColor="#0A6B4A" />
+    </Grid>
+</ContentPage>

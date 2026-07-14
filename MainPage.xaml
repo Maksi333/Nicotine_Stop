@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Nicotine_Stop.Controls"
+             x:Class="Nicotine_Stop.MainPage">
+
+    <!-- Temporary control gallery — replaced by onboarding/main routing in Phase 3/4. -->
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="18">
+
+            <Label Text="SNUSSTOP" Style="{StaticResource Overline}" TextColor="{DynamicResource PrimaryText}" />
+            <Label Text="Control gallery" Style="{StaticResource H1}" />
+
+            <controls:PuffMascot Diameter="120" Expression="Normal" Cheeks="True" Float="True"
+                                 HorizontalOptions="Center" />
+
+            <controls:PuffMascot Diameter="88" Expression="Happy"
+                                 HorizontalOptions="Center" />
+
+            <controls:ProgressRing WidthRequest="200" HeightRequest="200"
+                                   Progress="0.68" StrokeWidth="17"
+                                   TrackColor="{DynamicResource Track}"
+                                   FillColor="{DynamicResource Primary}"
+                                   HorizontalOptions="Center" />
+
+            <controls:ChunkyButton Text="Let's do this"
+                                   Fill="{DynamicResource Primary}"
+                                   ShadowColor="{DynamicResource PrimaryPressed}" />
+
+            <controls:ChunkyButton Text="SOS"
+                                   Fill="{DynamicResource Coral}"
+                                   ShadowColor="{DynamicResource CoralShadow}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Nicotine_Stop.Controls"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Nicotine_Stop.Views.Tabs.JourneyView"
+             x:Name="Root">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
+
+            <!-- Header -->
+            <Grid Padding="20,12,20,0" ColumnDefinitions="*,Auto">
+                <Label Grid.Column="0" Text="Journey" Style="{StaticResource TabTitle}" />
+                <Label Grid.Column="1" Text="{Binding BadgeCountLabel}" FontFamily="NunitoExtraBold"
+                       FontSize="12.5" TextColor="{DynamicResource Faint}" VerticalOptions="Center" />
+            </Grid>
+
+            <!-- Calendar -->
+            <Border Style="{StaticResource Card}" StrokeShape="RoundRectangle 20" Padding="16,14" Margin="20,14,20,0">
+                <VerticalStackLayout Spacing="0">
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,10">
+                        <Label Grid.Column="0" Text="{Binding MonthTitle}" FontFamily="NunitoBlack" FontSize="14"
+                               TextColor="{DynamicResource Ink}" />
+                        <HorizontalStackLayout Grid.Column="1" Spacing="10" VerticalOptions="Center">
+                            <HorizontalStackLayout Spacing="4">
+                                <BoxView WidthRequest="8" HeightRequest="8" CornerRadius="3" Color="{DynamicResource MintDeep}" VerticalOptions="Center" />
+                                <Label Text="clean" Style="{StaticResource FaintLabel}" FontSize="10.5" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Spacing="4">
+                                <BoxView WidthRequest="8" HeightRequest="8" CornerRadius="4" Color="#FFB627" VerticalOptions="Center" />
+                                <Label Text="craving" Style="{StaticResource FaintLabel}" FontSize="10.5" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Spacing="4">
+                                <BoxView WidthRequest="8" HeightRequest="8" CornerRadius="3" Color="{DynamicResource CalSlip}" VerticalOptions="Center" />
+                                <Label Text="slip" Style="{StaticResource FaintLabel}" FontSize="10.5" />
+                            </HorizontalStackLayout>
+                        </HorizontalStackLayout>
+                    </Grid>
+
+                    <toolkit:UniformItemsLayout MaxColumns="7" BindableLayout.ItemsSource="{Binding Calendar}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Grid HeightRequest="38" Padding="2">
+                                    <Border StrokeThickness="0" StrokeShape="RoundRectangle 11" BackgroundColor="Transparent"
+                                            IsVisible="{Binding HasDay}">
+                                        <Border.Triggers>
+                                            <DataTrigger TargetType="Border" Binding="{Binding Status}" Value="clean">
+                                                <Setter Property="BackgroundColor" Value="{DynamicResource CleanDay}" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Border" Binding="{Binding Status}" Value="today">
+                                                <Setter Property="BackgroundColor" Value="#14B36B" />
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="Border" Binding="{Binding Status}" Value="slip">
+                                                <Setter Property="BackgroundColor" Value="{DynamicResource CalSlip}" />
+                                            </DataTrigger>
+                                        </Border.Triggers>
+                                        <Grid>
+                                            <Label Text="{Binding Text}" FontFamily="NunitoExtraBold" FontSize="12.5"
+                                                   HorizontalOptions="Center" VerticalOptions="Center"
+                                                   TextColor="{DynamicResource Faint}">
+                                                <Label.Triggers>
+                                                    <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="clean">
+                                                        <Setter Property="TextColor" Value="{DynamicResource CleanDayText}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="today">
+                                                        <Setter Property="TextColor" Value="White" />
+                                                    </DataTrigger>
+                                                    <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="slip">
+                                                        <Setter Property="TextColor" Value="{DynamicResource Ink}" />
+                                                    </DataTrigger>
+                                                </Label.Triggers>
+                                            </Label>
+                                            <BoxView WidthRequest="5" HeightRequest="5" CornerRadius="3" Color="#FFB627"
+                                                     HorizontalOptions="Center" VerticalOptions="End" Margin="0,0,0,3"
+                                                     IsVisible="{Binding HasCraving}" />
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </toolkit:UniformItemsLayout>
+
+                    <Label Text="{Binding InsightLine}" FontFamily="NunitoBold" FontSize="12"
+                           TextColor="{DynamicResource Muted}" Margin="0,10,0,0" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Badge grid -->
+            <Label Text="BADGES" Style="{StaticResource Overline}" Margin="20,18,20,0" />
+            <toolkit:UniformItemsLayout MaxColumns="4" Padding="20,10,20,0"
+                                        BindableLayout.ItemsSource="{Binding Badges}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <VerticalStackLayout Spacing="5" Padding="0,0,0,12" HorizontalOptions="Center">
+                            <Border WidthRequest="64" HeightRequest="64" StrokeThickness="0" HorizontalOptions="Center"
+                                    BackgroundColor="{DynamicResource Track}" StrokeShape="RoundRectangle 32">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding Earned}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="{DynamicResource Mint}" />
+                                        <Setter Property="Stroke" Value="#14B36B" />
+                                        <Setter Property="StrokeThickness" Value="3" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Border" Binding="{Binding Newest}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="{DynamicResource GoldTint}" />
+                                        <Setter Property="Stroke" Value="#FFB627" />
+                                        <Setter Property="StrokeThickness" Value="3" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Grid>
+                                    <Label Text="{Binding Emoji}" FontSize="26" HorizontalOptions="Center" VerticalOptions="Center">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding Locked}" Value="True">
+                                                <Setter Property="Opacity" Value="0.4" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                    <Label Text="✨" FontSize="14" HorizontalOptions="End" VerticalOptions="Start"
+                                           Margin="0,-4,-2,0" IsVisible="{Binding Newest}" />
+                                </Grid>
+                            </Border>
+                            <Label Text="{Binding Label}" FontFamily="NunitoExtraBold" FontSize="10"
+                                   WidthRequest="86" HeightRequest="28" LineBreakMode="WordWrap" MaxLines="2"
+                                   HorizontalTextAlignment="Center" TextColor="{DynamicResource Ink}">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Locked}" Value="True">
+                                        <Setter Property="TextColor" Value="{DynamicResource Faint}" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </toolkit:UniformItemsLayout>
+
+            <BoxView HeightRequest="16" Color="Transparent" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentView>

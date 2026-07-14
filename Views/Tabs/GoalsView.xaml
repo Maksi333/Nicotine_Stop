@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Nicotine_Stop.Controls"
+             x:Class="Nicotine_Stop.Views.Tabs.GoalsView"
+             x:Name="Root">
+
+    <ContentView.Resources>
+        <controls:StarFractionConverter x:Key="Star" />
+        <controls:InverseBoolConverter x:Key="InvBool" />
+    </ContentView.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Padding="20,10,20,0" ColumnDefinitions="*,Auto">
+            <Label Grid.Column="0" Text="Goals" Style="{StaticResource TabTitle}" VerticalOptions="Center" />
+            <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="{DynamicResource Mint}"
+                    StrokeShape="RoundRectangle 12" Padding="12,7" VerticalOptions="Center">
+                <HorizontalStackLayout Spacing="6">
+                    <Label Text="💰" FontSize="13" VerticalOptions="Center" />
+                    <Label VerticalOptions="Center" FontFamily="NunitoBlack" FontSize="13" TextColor="{DynamicResource PrimaryText}">
+                        <Label.Text>
+                            <MultiBinding StringFormat="{}{0} {1} saved">
+                                <Binding Path="SavedStr" />
+                                <Binding Path="CurrencySymbol" />
+                            </MultiBinding>
+                        </Label.Text>
+                    </Label>
+                </HorizontalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- Empty state (1m) -->
+        <Grid Grid.Row="1" IsVisible="{Binding IsEmpty}" RowDefinitions="*,Auto" Padding="0">
+            <VerticalStackLayout Grid.Row="0" VerticalOptions="Center" HorizontalOptions="Center" Padding="32,0" Spacing="0">
+                <Grid HorizontalOptions="Center">
+                    <controls:PuffMascot Diameter="104" Expression="Thinking" Cheeks="True" Float="True" />
+                    <Label Text="💭" FontSize="26" HorizontalOptions="End" VerticalOptions="Start" Margin="0,-6,-6,0" />
+                </Grid>
+                <Label Text="What will freedom buy?" Style="{StaticResource H2}" FontSize="24"
+                       HorizontalTextAlignment="Center" Margin="0,20,0,0" />
+                <Label HorizontalTextAlignment="Center" FontFamily="Nunito" FontSize="14.5" TextColor="{DynamicResource Muted}" Margin="0,10,0,0">
+                    <Label.Text>
+                        <MultiBinding StringFormat="Your savings are already piling up — {0} {1} so far. Point that money at something you actually want.">
+                            <Binding Path="SavedIntStr" />
+                            <Binding Path="CurrencySymbol" />
+                        </MultiBinding>
+                    </Label.Text>
+                </Label>
+                <FlexLayout Wrap="Wrap" JustifyContent="Center" Margin="0,14,0,0">
+                    <Border StrokeThickness="1.5" Stroke="{DynamicResource CardBorder}" BackgroundColor="{DynamicResource Card}"
+                            StrokeShape="RoundRectangle 12" Padding="13,7" Margin="4">
+                        <Label Text="🎮 New game · 449 kr" FontFamily="NunitoExtraBold" FontSize="12.5" TextColor="{DynamicResource Muted}" />
+                    </Border>
+                    <Border StrokeThickness="1.5" Stroke="{DynamicResource CardBorder}" BackgroundColor="{DynamicResource Card}"
+                            StrokeShape="RoundRectangle 12" Padding="13,7" Margin="4">
+                        <Label Text="👟 Sneakers · 900 kr" FontFamily="NunitoExtraBold" FontSize="12.5" TextColor="{DynamicResource Muted}" />
+                    </Border>
+                    <Border StrokeThickness="1.5" Stroke="{DynamicResource CardBorder}" BackgroundColor="{DynamicResource Card}"
+                            StrokeShape="RoundRectangle 12" Padding="13,7" Margin="4">
+                        <Label Text="✈️ Weekend trip · 2.500 kr" FontFamily="NunitoExtraBold" FontSize="12.5" TextColor="{DynamicResource Muted}" />
+                    </Border>
+                </FlexLayout>
+            </VerticalStackLayout>
+            <controls:ChunkyButton Grid.Row="1" Margin="20,12,20,16" Text="Add my first goal" FontSize="16"
+                                   Fill="{DynamicResource Primary}" ShadowColor="{DynamicResource PrimaryPressed}"
+                                   Command="{Binding AddGoalCommand}" />
+        </Grid>
+
+        <!-- Populated (1l) -->
+        <ScrollView Grid.Row="1" IsVisible="{Binding IsEmpty, Converter={StaticResource InvBool}}">
+            <VerticalStackLayout Padding="20,12,20,20" Spacing="12">
+
+                <Border StrokeThickness="1.5" Stroke="{DynamicResource CardBorder}" BackgroundColor="{DynamicResource Card}"
+                        StrokeShape="RoundRectangle 14" Padding="14,10">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0" Text="Split savings between goals" FontFamily="NunitoExtraBold" FontSize="13"
+                               TextColor="{DynamicResource Muted}" VerticalOptions="Center" />
+                        <controls:PillToggle Grid.Column="1" IsToggled="{Binding SplitSavings}" VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+
+                <VerticalStackLayout Spacing="12" BindableLayout.ItemsSource="{Binding Goals}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Border StrokeThickness="1.5" Stroke="{DynamicResource CardBorder}" BackgroundColor="{DynamicResource Card}"
+                                    StrokeShape="RoundRectangle 22" Padding="16">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding BindingContext.EditGoalCommand, Source={x:Reference Root}}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="74,*" ColumnSpacing="14">
+                                    <Border Grid.Column="0" WidthRequest="74" HeightRequest="74" StrokeThickness="0"
+                                            BackgroundColor="{DynamicResource Track}" StrokeShape="RoundRectangle 16">
+                                        <Grid>
+                                            <Label Text="🖼️" FontSize="24" HorizontalOptions="Center" VerticalOptions="Center"
+                                                   IsVisible="{Binding HasPhoto, Converter={StaticResource InvBool}}" Opacity="0.5" />
+                                            <Image Source="{Binding PhotoPath}" Aspect="AspectFill" IsVisible="{Binding HasPhoto}" />
+                                        </Grid>
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <Label Grid.Column="0" Text="{Binding Name}" FontFamily="NunitoBlack" FontSize="16" TextColor="{DynamicResource Ink}" />
+                                            <Label Grid.Column="1" Text="{Binding PriceStr}" FontFamily="NunitoExtraBold" FontSize="13" TextColor="{DynamicResource Faint}" VerticalOptions="Center" />
+                                        </Grid>
+                                        <Border HeightRequest="16" StrokeThickness="0" BackgroundColor="{DynamicResource Track}"
+                                                StrokeShape="RoundRectangle 8" Margin="0,8,0,0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="{Binding ProgressFraction, Converter={StaticResource Star}}" />
+                                                    <ColumnDefinition Width="{Binding ProgressFraction, Converter={StaticResource Star}, ConverterParameter=rem}" />
+                                                </Grid.ColumnDefinitions>
+                                                <Border Grid.Column="0" BackgroundColor="{Binding BarColor}" StrokeThickness="0" StrokeShape="RoundRectangle 8" />
+                                            </Grid>
+                                        </Border>
+                                        <Grid ColumnDefinitions="*,Auto" Margin="0,7,0,0">
+                                            <Label Grid.Column="0" Text="{Binding PercentStr}" FontFamily="NunitoExtraBold" FontSize="12"
+                                                   TextColor="{DynamicResource PrimaryText}">
+                                                <Label.Triggers>
+                                                    <DataTrigger TargetType="Label" Binding="{Binding PercentIsBlue}" Value="True">
+                                                        <Setter Property="TextColor" Value="#2E75C4" />
+                                                    </DataTrigger>
+                                                </Label.Triggers>
+                                            </Label>
+                                            <Label Grid.Column="1" Text="{Binding StatusStr}" FontFamily="NunitoExtraBold" FontSize="12" TextColor="{DynamicResource Faint}" />
+                                        </Grid>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Border StrokeThickness="2.5" Stroke="{DynamicResource CardBorder}" BackgroundColor="Transparent"
+                        StrokeDashArray="6,4" StrokeShape="RoundRectangle 18" HeightRequest="54">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding AddGoalCommand}" />
+                    </Border.GestureRecognizers>
+                    <Label Text="+ Add a goal" FontFamily="NunitoBlack" FontSize="15" TextColor="{DynamicResource PrimaryText}"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+
+                <VerticalStackLayout Spacing="8" IsVisible="{Binding HasTrophies}">
+                    <Label Text="TROPHY SHELF" Style="{StaticResource Overline}" />
+                    <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Trophies}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Border StrokeThickness="0" BackgroundColor="{DynamicResource GoldTint}" StrokeShape="RoundRectangle 18" Padding="16,12">
+                                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                        <Label Grid.Column="0" Text="🏆" FontSize="24" VerticalOptions="Center" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                                            <Label Text="{Binding Name}" FontFamily="NunitoBlack" FontSize="14" TextColor="{DynamicResource GoldTextDeep}" />
+                                            <Label Text="{Binding TrophyCaption}" FontFamily="NunitoBold" FontSize="11.5" TextColor="{DynamicResource GoldText}" />
+                                        </VerticalStackLayout>
+                                        <Border Grid.Column="2" WidthRequest="24" HeightRequest="24" StrokeThickness="0" BackgroundColor="#FFB627"
+                                                StrokeShape="RoundRectangle 12" VerticalOptions="Center">
+                                            <Label Text="✓" FontFamily="NunitoBlack" FontSize="13" TextColor="White" HorizontalOptions="Center" VerticalOptions="Center" />
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentView>
