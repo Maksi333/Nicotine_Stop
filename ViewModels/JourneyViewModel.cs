@@ -30,7 +30,7 @@ public partial class JourneyViewModel : ObservableObject
     public ObservableCollection<DayCellVM> Calendar { get; } = new();
 
     public int EarnedCount { get; private set; }
-    public string BadgeCountLabel => $"{EarnedCount} of {SnusStop.Core.Models.Badges.All.Count} badges";
+    public string BadgeCountLabel => $"{EarnedCount} of {SnusStop.Core.Models.Badges.Count} badges";
     public string MonthTitle => DateTime.Now.ToString("MMMM yyyy");
     public string InsightLine { get; private set; } = "";
 

@@ -1,3 +1,4 @@
+using CommunityToolkit.Maui.Behaviors;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Maui.Controls.Shapes;
 using Nicotine_Stop.Services;
@@ -14,6 +15,12 @@ public partial class MinesweeperPage : ContentPage
     private const int Mines = 10;
     private const int Xp = XpService.GameMinesweeperXp;
 
+    /// <summary>Hold time to flag, in ms: quick enough to feel instant, long enough to not fire on a dig.</summary>
+    private const int LongPressHold = 350;
+
+    /// <summary>How long after a hold a tap on that same cell is treated as the hold's own release.</summary>
+    private static readonly TimeSpan TapAfterHoldWindow = TimeSpan.FromMilliseconds(600);
+
     private readonly AppState _state;
     private readonly IServiceProvider _services;
     private readonly Border[,] _cells = new Border[Size, Size];
@@ -24,6 +31,8 @@ public partial class MinesweeperPage : ContentPage
     private int _seconds;
     private bool _flagMode;
     private bool _awarded;
+    private (int Row, int Col) _lastLongPressCell = (-1, -1);
+    private DateTime _lastLongPressAt = DateTime.MinValue;
 
     public MinesweeperPage(AppState state, IServiceProvider services)
     {
@@ -57,6 +66,15 @@ public partial class MinesweeperPage : ContentPage
                 var tap = new TapGestureRecognizer();
                 tap.Tapped += (_, _) => OnCell(rr, cc);
                 cell.GestureRecognizers.Add(tap);
+
+                // Second, quicker way to flag, alongside the Dig/Flag toggle: hold a cell. Both
+                // routes call ToggleFlagAt, so there is only ever one flag state and one counter.
+                cell.Behaviors.Add(new TouchBehavior
+                {
+                    LongPressDuration = LongPressHold,
+                    LongPressCommand = new Command(() => OnCellLongPress(rr, cc)),
+                });
+
                 _cells[r, c] = cell;
                 _labels[r, c] = lbl;
                 Board.Add(cell, c, r);
@@ -86,8 +104,17 @@ public partial class MinesweeperPage : ContentPage
     private async void OnCell(int r, int c)
     {
         if (_engine.GameOver) return;
-        if (_flagMode) _engine.ToggleFlag(r, c);
-        else _engine.Reveal(r, c);
+
+        // A hold already flagged this cell; the tap that lands when the finger lifts must not dig it.
+        if (ConsumedByLongPress(r, c)) return;
+
+        if (_flagMode)
+        {
+            ToggleFlagAt(r, c);
+            return;
+        }
+
+        _engine.Reveal(r, c);
         Refresh();
 
         if (_engine.Lost)
@@ -100,6 +127,32 @@ public partial class MinesweeperPage : ContentPage
             await WinAsync();
         }
     }
+
+    /// <summary>The one flag code path — used by Flag mode and by long-press alike. The engine
+    /// ignores revealed cells and un-flags an already-flagged one, so both rules come for free.</summary>
+    private void ToggleFlagAt(int r, int c)
+    {
+        _engine.ToggleFlag(r, c);
+        Refresh();
+    }
+
+    private void OnCellLongPress(int r, int c)
+    {
+        if (_engine.GameOver) return;
+
+        _lastLongPressCell = (r, c);
+        _lastLongPressAt = DateTime.UtcNow;
+
+        try { HapticFeedback.Default.Perform(HapticFeedbackType.LongPress); } catch { }
+        ToggleFlagAt(r, c);
+    }
+
+    /// <summary>
+    /// True while the tap that follows a hold on this same cell is still arriving. Scoped to the
+    /// cell and to a short window, so it can never swallow a genuine tap elsewhere on the board.
+    /// </summary>
+    private bool ConsumedByLongPress(int r, int c) =>
+        _lastLongPressCell == (r, c) && DateTime.UtcNow - _lastLongPressAt < TapAfterHoldWindow;
 
     private void Refresh()
     {
@@ -171,9 +224,13 @@ public partial class MinesweeperPage : ContentPage
         if (_awarded) return;
         _awarded = true;
         _timer?.Stop();
-        await _state.AddEventAsync(EventLog.CravingWon(DateTime.UtcNow, "game", Xp));
+
+        // Only the first win of each local day pays XP; the craving still counts on replays.
+        int xp = _services.GetRequiredService<IDailyXpService>().ClaimXp(ActivityIds.Minesweeper, Xp);
+
+        await _state.AddEventAsync(EventLog.CravingWon(DateTime.UtcNow, "game", xp));
         var celebrate = _services.GetRequiredService<CravingDefeatedPage>();
-        celebrate.Init(Xp);
+        celebrate.Init(xp);
         await Navigation.PushAsync(celebrate);
     }
 

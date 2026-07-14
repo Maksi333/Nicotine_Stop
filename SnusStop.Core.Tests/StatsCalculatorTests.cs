@@ -59,10 +59,54 @@ public class StatsCalculatorTests
     }
 
     [Fact]
-    public void FormatMoney_uses_danish_grouping()
+    public void FormatMoney_uses_danish_grouping_for_kroner()
     {
-        Assert.Equal("1.234,56", StatsCalculator.FormatMoney(1234.56m, withDecimals: true));
-        Assert.Equal("1.235", StatsCalculator.FormatMoney(1234.56m, withDecimals: false));
+        Assert.Equal("1.234,56 kr", StatsCalculator.FormatMoney(1234.56m, Currency.DKK, withDecimals: true));
+        Assert.Equal("1.235 kr", StatsCalculator.FormatMoney(1234.56m, Currency.DKK, withDecimals: false));
+    }
+
+    [Fact]
+    public void FormatMoney_carries_the_chosen_currencys_symbol()
+    {
+        // The bug this guards: every screen used to print "kr" no matter what the user picked.
+        Assert.Equal("45 kr", StatsCalculator.FormatMoney(45m, Currency.DKK, false));
+        Assert.Equal("45 kr", StatsCalculator.FormatMoney(45m, Currency.SEK, false));
+        Assert.Equal("45 kr", StatsCalculator.FormatMoney(45m, Currency.NOK, false));
+        Assert.Equal("45 €", StatsCalculator.FormatMoney(45m, Currency.EUR, false));
+        Assert.Equal("$45", StatsCalculator.FormatMoney(45m, Currency.USD, false));
+    }
+
+    [Fact]
+    public void Dollars_lead_the_amount_and_use_us_grouping()
+    {
+        // "$1,234.56", never "1.234,56 $".
+        Assert.Equal("$1,234.56", StatsCalculator.FormatMoney(1234.56m, Currency.USD, withDecimals: true));
+        Assert.Equal("$1,235", StatsCalculator.FormatMoney(1234.56m, Currency.USD, withDecimals: false));
+    }
+
+    [Fact]
+    public void FormatNumber_groups_counts_without_any_currency_symbol()
+    {
+        // Used for things like "5.475 cigarettes never used" — a count, not money.
+        Assert.Equal("5.475", StatsCalculator.FormatNumber(5475m, Currency.DKK));
+        Assert.Equal("5,475", StatsCalculator.FormatNumber(5475m, Currency.USD));
+    }
+
+    [Fact]
+    public void Every_currency_has_a_symbol_and_appears_in_the_picker_list()
+    {
+        Assert.Equal(5, Currencies.All.Count);
+        Assert.Contains(Currency.USD, Currencies.All);
+        foreach (var c in Currencies.All)
+            Assert.False(string.IsNullOrWhiteSpace(c.Symbol()), $"{c} has no symbol");
+    }
+
+    [Fact]
+    public void Currency_parses_from_its_code()
+    {
+        Assert.Equal(Currency.USD, CurrencyExtensions.Parse("USD"));
+        Assert.Equal(Currency.EUR, CurrencyExtensions.Parse("EUR"));
+        Assert.Equal(Currency.DKK, CurrencyExtensions.Parse("nonsense"));   // safe default
     }
 
     [Fact]

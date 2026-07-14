@@ -19,7 +19,7 @@ public partial class OnboardingViewModel : ObservableObject
     {
         _profiles = profiles;
 
-        foreach (var c in new[] { Currency.DKK, Currency.SEK, Currency.NOK, Currency.EUR })
+        foreach (var c in Currencies.All)
             CurrencyChips.Add(new CurrencyChipVM(c, c == Currency));
 
         MotivationOptions.Add(new("health", "My health", "❤️", Color.FromArgb("#EAF7F0")));
@@ -48,6 +48,7 @@ public partial class OnboardingViewModel : ObservableObject
 
     // ── Fields ──────────────────────────────────────────────────
     [ObservableProperty] private string name = "";
+    [ObservableProperty] private int addictionIndex; // 0 Snus · 1 Cigarettes
     [ObservableProperty] private int pouchesPerDay = 15;
     [ObservableProperty] private int pouchesPerCan = 20;
     [ObservableProperty] private decimal canPrice = 45m;
@@ -66,14 +67,30 @@ public partial class OnboardingViewModel : ObservableObject
     public string CurrencySymbol => Currency.Symbol();
     public DateTime QuitLocal => QuitDate.Date + QuitTime;
 
+    public AddictionType Addiction => AddictionIndex == 1 ? AddictionType.Cigarettes : AddictionType.Snus;
+    private AddictionCopy Copy => AddictionCopy.For(Addiction);
+
+    // Every snus-specific word on the wizard comes from here.
+    public string QuitHeadline => $"{Copy.QuitHeadline}\nKeep the money.";
+    public string UnitsPerDayLabel => Copy.UnitsPerDayLabel;
+    public string UnitsPerContainerLabel => Copy.UnitsPerContainerLabel;
+    public string ContainerCostQuestion => Copy.ContainerCostQuestion;
+    public string PerContainerLabel => Copy.PerContainerLabel;
+    public string ContainerSavingsLine => $"Every skipped {Copy.Container} goes straight into your savings.";
+    public string ContainersPerWeekLine => $"That’s about {CansPerWeek} {Copy.Containers} a week. Let’s turn that into money.";
+    public string PerUnitLine => $"That’s {PerPouchStr} per {Copy.Unit} — a real daily saving.";
+    public string YearUnitsLine => $"and {YearPouchesStr} {Copy.Units} never used";
+
     public string GreetingName => string.IsNullOrWhiteSpace(Name) ? "there" : Name.Trim();
     public string CansPerWeek => StatsCalculator.CansPerWeek(Snapshot()).ToString();
-    public string PerPouchStr => StatsCalculator.FormatMoney(StatsCalculator.PerPouch(Snapshot()), true);
-    public string PerDayStr => StatsCalculator.FormatMoney(StatsCalculator.PerDayCost(Snapshot()), true);
-    public string WeekSaveStr => StatsCalculator.FormatMoney(StatsCalculator.WeekSave(Snapshot()), false);
-    public string MonthSaveStr => StatsCalculator.FormatMoney(StatsCalculator.MonthSave(Snapshot()), false);
-    public string YearSaveStr => StatsCalculator.FormatMoney(StatsCalculator.YearSave(Snapshot()), false);
-    public string YearPouchesStr => StatsCalculator.FormatMoney(StatsCalculator.YearPouches(Snapshot()), false);
+    public string PerPouchStr => StatsCalculator.FormatMoney(StatsCalculator.PerPouch(Snapshot()), Currency, true);
+    public string PerDayStr => StatsCalculator.FormatMoney(StatsCalculator.PerDayCost(Snapshot()), Currency, true);
+    public string WeekSaveStr => StatsCalculator.FormatMoney(StatsCalculator.WeekSave(Snapshot()), Currency, false);
+    public string MonthSaveStr => StatsCalculator.FormatMoney(StatsCalculator.MonthSave(Snapshot()), Currency, false);
+    public string YearSaveStr => StatsCalculator.FormatMoney(StatsCalculator.YearSave(Snapshot()), Currency, false);
+
+    /// <summary>A count of units, not money — so it gets grouping but no currency symbol.</summary>
+    public string YearPouchesStr => StatsCalculator.FormatNumber(StatsCalculator.YearPouches(Snapshot()), Currency);
 
     public string CalendarTitle => new DateTime(_calYear, _calMonth, 1).ToString("MMMM yyyy");
     public string QuitTimeStr => QuitLocal.ToString("HH:mm");
@@ -154,6 +171,7 @@ public partial class OnboardingViewModel : ObservableObject
     private Profile Snapshot() => new()
     {
         Name = Name.Trim(),
+        Addiction = Addiction,
         QuitUtc = QuitLocal.ToUniversalTime(),
         PouchesPerDay = PouchesPerDay,
         PouchesPerCan = PouchesPerCan,
@@ -197,12 +215,32 @@ public partial class OnboardingViewModel : ObservableObject
         OnPropertyChanged(nameof(YearSaveStr));
         OnPropertyChanged(nameof(YearPouchesStr));
         OnPropertyChanged(nameof(CurrencySymbol));
+
+        // These read the live numbers back, so they move with the steppers too.
+        OnPropertyChanged(nameof(ContainersPerWeekLine));
+        OnPropertyChanged(nameof(PerUnitLine));
+        OnPropertyChanged(nameof(YearUnitsLine));
     }
 
+    /// <summary>Re-labels the whole wizard the instant the user flips Snus ⇄ Cigarettes.</summary>
+    private void RaiseCopy()
+    {
+        OnPropertyChanged(nameof(Addiction));
+        OnPropertyChanged(nameof(QuitHeadline));
+        OnPropertyChanged(nameof(UnitsPerDayLabel));
+        OnPropertyChanged(nameof(UnitsPerContainerLabel));
+        OnPropertyChanged(nameof(ContainerCostQuestion));
+        OnPropertyChanged(nameof(PerContainerLabel));
+        OnPropertyChanged(nameof(ContainerSavingsLine));
+        RaiseSavings();
+    }
+
+    partial void OnAddictionIndexChanged(int value) => RaiseCopy();
     partial void OnPouchesPerDayChanged(int value) => RaiseSavings();
     partial void OnPouchesPerCanChanged(int value) => RaiseSavings();
     partial void OnCanPriceChanged(decimal value) => RaiseSavings();
 
+    /// <summary>Switching currency re-renders every money string on the wizard.</summary>
     partial void OnCurrencyChanged(Currency value) => RaiseSavings();
 
     partial void OnQuitModeIndexChanged(int value)

@@ -90,9 +90,13 @@ public partial class BreathePage : ContentPage
         _completed = true;
         _cts?.Cancel();
 
-        await _state.AddEventAsync(EventLog.CravingWon(DateTime.UtcNow, "breathe", XpService.CravingXp));
+        // First breathing session of the day pays XP; later ones still count the craving, but earn 0.
+        int xp = _services.GetRequiredService<IDailyXpService>()
+            .ClaimXp(ActivityIds.Breathe, XpService.CravingXp);
+
+        await _state.AddEventAsync(EventLog.CravingWon(DateTime.UtcNow, "breathe", xp));
         var celebrate = _services.GetRequiredService<CravingDefeatedPage>();
-        celebrate.Init(XpService.CravingXp);
+        celebrate.Init(xp);
         await Navigation.PushAsync(celebrate);
     }
 }

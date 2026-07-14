@@ -67,9 +67,9 @@
             <!-- Stat cards -->
             <Grid Padding="20,14,20,0" ColumnDefinitions="1.2*,*,*" ColumnSpacing="10">
                 <controls:StatCard Grid.Column="0" Emoji="💰"
-                                   Value="{Binding MoneyStr, StringFormat='{0} kr'}" Caption="saved"
+                                   Value="{Binding MoneyStr}" Caption="saved"
                                    ValueColor="{DynamicResource PrimaryText}" />
-                <controls:StatCard Grid.Column="1" Emoji="🚫" Value="{Binding PouchesAvoidedStr}" Caption="pouches skipped" />
+                <controls:StatCard Grid.Column="1" Emoji="🚫" Value="{Binding PouchesAvoidedStr}" Caption="{Binding SkippedCaption}" />
                 <controls:StatCard Grid.Column="2" Emoji="🔥" Value="{Binding StreakStr}" Caption="day streak"
                                    ValueColor="{DynamicResource Flame}" />
             </Grid>

@@ -40,6 +40,10 @@ public static class MauiProgram
         services.AddSingleton<ThemeService>();
         services.AddSingleton<ClockService>();
         services.AddSingleton<NotificationService>();
+        services.AddSingleton<GameScoreStore>();
+        services.AddSingleton<SnusStop.Core.Services.IDailyXpStore, PreferencesDailyXpStore>();
+        services.AddSingleton<SnusStop.Core.Services.IDailyXpService>(sp =>
+            new SnusStop.Core.Services.DailyXpService(sp.GetRequiredService<SnusStop.Core.Services.IDailyXpStore>()));
 
         // Data
         services.AddSingleton<AppDatabase>();

@@ -1,14 +1,20 @@
 using Microsoft.Maui.Controls.Shapes;
 using Microsoft.Maui.Layouts;
 using Nicotine_Stop.Services;
+using SnusStop.Core.Services;
 
 namespace Nicotine_Stop.Views.Games;
 
 public class ReflexTapPage : GameHostPage
 {
+    private readonly GameScoreStore _scores;
+
     private AbsoluteLayout _field = null!;
     private Label _scoreLabel = null!;
+    private Label _bestLabel = null!;
     private Label _timerLabel = null!;
+    private Grid _celebration = null!;
+    private Label _celebrationScore = null!;
     private int _score;
     private int _seconds = 60;
     private IDispatcherTimer? _gameTimer;
@@ -16,9 +22,11 @@ public class ReflexTapPage : GameHostPage
     private readonly Random _rng = new();
     private bool _ended;
 
-    public ReflexTapPage(AppState state, IServiceProvider services) : base(state, services)
+    public ReflexTapPage(AppState state, IServiceProvider services, GameScoreStore scores) : base(state, services)
     {
         GameXp = 10;
+        ActivityId = ActivityIds.Reflex;
+        _scores = scores;
         Build();
         Start();
     }
@@ -26,11 +34,18 @@ public class ReflexTapPage : GameHostPage
     private void Build()
     {
         _scoreLabel = new Label { Text = "0", FontFamily = "NunitoBlack", FontSize = 17, TextColor = Color.FromArgb("#F2F1FA") };
+        _bestLabel = new Label { Text = _scores.GetHighScore(GameScoreStore.ReflexTap).ToString(), FontFamily = "NunitoBlack", FontSize = 17, TextColor = Color.FromArgb("#FFD98A") };
         _timerLabel = new Label { Text = "01:00", FontFamily = "NunitoBlack", FontSize = 17, TextColor = Color.FromArgb("#F2F1FA") };
 
-        var chips = new Grid { ColumnDefinitions = { new(GridLength.Star), new(GridLength.Star) }, ColumnSpacing = 10, Padding = new Thickness(0, 14, 0, 0) };
+        var chips = new Grid
+        {
+            ColumnDefinitions = { new(GridLength.Star), new(GridLength.Star), new(GridLength.Star) },
+            ColumnSpacing = 10,
+            Padding = new Thickness(0, 14, 0, 0),
+        };
         chips.Add(Chip("🎯", "SCORE", _scoreLabel), 0);
-        chips.Add(Chip("⏱️", "TIME LEFT", _timerLabel), 1);
+        chips.Add(Chip("🏅", "BEST", _bestLabel), 1);
+        chips.Add(Chip("⏱️", "TIME LEFT", _timerLabel), 2);
 
         _field = new AbsoluteLayout();
         var panel = new Border { StrokeThickness = 0, BackgroundColor = Color.FromArgb("#14FFFFFF"), StrokeShape = new RoundRectangle { CornerRadius = 20 }, Content = _field, Padding = 6 };
@@ -44,7 +59,62 @@ public class ReflexTapPage : GameHostPage
         outer.Add(chips, 0, 1);
         outer.Add(panel, 0, 2);
         outer.Add(OkayFooter(), 0, 3);
-        Content = outer;
+
+        Content = new Grid { Children = { outer, BuildCelebration() } };
+    }
+
+    /// <summary>Full-bleed overlay shown only when the personal best is actually beaten.</summary>
+    private Grid BuildCelebration()
+    {
+        _celebrationScore = new Label
+        {
+            FontFamily = "NunitoBlack",
+            FontSize = 44,
+            TextColor = Colors.White,
+            HorizontalTextAlignment = TextAlignment.Center,
+        };
+
+        _celebration = new Grid
+        {
+            IsVisible = false,
+            Opacity = 0,
+            BackgroundColor = Color.FromArgb("#E6232140"),
+            Children =
+            {
+                new Controls.ConfettiView(),
+                new VerticalStackLayout
+                {
+                    Spacing = 2,
+                    VerticalOptions = LayoutOptions.Center,
+                    HorizontalOptions = LayoutOptions.Center,
+                    Children =
+                    {
+                        new Label { Text = "🏅", FontSize = 56, HorizontalTextAlignment = TextAlignment.Center },
+                        new Label
+                        {
+                            Text = "NEW BEST!",
+                            FontFamily = "NunitoBlack",
+                            FontSize = 15,
+                            CharacterSpacing = 2,
+                            TextColor = Color.FromArgb("#FFD98A"),
+                            HorizontalTextAlignment = TextAlignment.Center,
+                            Margin = new Thickness(0, 12, 0, 0),
+                        },
+                        _celebrationScore,
+                        new Label
+                        {
+                            Text = "taps — your fastest hands yet.",
+                            FontFamily = "NunitoBold",
+                            FontSize = 13.5,
+                            TextColor = Color.FromArgb("#B9B4E3"),
+                            HorizontalTextAlignment = TextAlignment.Center,
+                        },
+                    },
+                },
+            },
+        };
+
+        return _celebration;
     }
 
     private static Border Chip(string emoji, string caption, Label value)
@@ -81,7 +151,7 @@ public class ReflexTapPage : GameHostPage
             if (_seconds <= 0)
             {
                 Stop();
-                await WinAsync();
+                await EndRoundAsync();
             }
         };
         _gameTimer.Start();
@@ -97,6 +167,34 @@ public class ReflexTapPage : GameHostPage
         _ended = true;
         _gameTimer?.Stop();
         _spawnTimer?.Stop();
+    }
+
+    /// <summary>
+    /// Time's up. A strictly higher score than the stored best is a new record — celebrate it and
+    /// save it. Equalling or missing the best does neither.
+    /// </summary>
+    private async Task EndRoundAsync()
+    {
+        if (_scores.TrySetHighScore(GameScoreStore.ReflexTap, _score))
+        {
+            _bestLabel.Text = _score.ToString();
+            await CelebrateNewBestAsync();
+        }
+
+        await WinAsync();
+    }
+
+    private async Task CelebrateNewBestAsync()
+    {
+        _celebrationScore.Text = _score.ToString();
+        _celebration.IsVisible = true;
+
+        try { HapticFeedback.Default.Perform(HapticFeedbackType.LongPress); } catch { }
+
+        await _celebration.FadeTo(1, 220, Easing.CubicOut);
+        await Task.Delay(1600);
+        await _celebration.FadeTo(0, 200, Easing.CubicIn);
+        _celebration.IsVisible = false;
     }
 
     private void Spawn()

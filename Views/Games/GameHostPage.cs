@@ -3,6 +3,7 @@ using Microsoft.Maui.Controls.Shapes;
 using Nicotine_Stop.Services;
 using Nicotine_Stop.Views.Sos;
 using SnusStop.Core.Models;
+using SnusStop.Core.Services;
 
 namespace Nicotine_Stop.Views.Games;
 
@@ -12,6 +13,10 @@ public abstract class GameHostPage : ContentPage
     protected readonly AppState State;
     protected readonly IServiceProvider Services;
     protected int GameXp = 10;
+
+    /// <summary>Key this game claims its once-per-day XP under (see <see cref="ActivityIds"/>).</summary>
+    protected string ActivityId = "";
+
     private bool _awarded;
 
     protected GameHostPage(AppState state, IServiceProvider services)
@@ -82,9 +87,14 @@ public abstract class GameHostPage : ContentPage
     {
         if (_awarded) return;
         _awarded = true;
-        await State.AddEventAsync(EventLog.CravingWon(DateTime.UtcNow, "game", GameXp));
+
+        // XP is capped to the first win of each local day; the craving-won event is logged either
+        // way, so replays still credit the streak, badges and calendar — they just earn 0 XP.
+        int xp = Services.GetRequiredService<IDailyXpService>().ClaimXp(ActivityId, GameXp);
+
+        await State.AddEventAsync(EventLog.CravingWon(DateTime.UtcNow, "game", xp));
         var celebrate = Services.GetRequiredService<CravingDefeatedPage>();
-        celebrate.Init(GameXp);
+        celebrate.Init(xp);
         await Navigation.PushAsync(celebrate);
     }
 }

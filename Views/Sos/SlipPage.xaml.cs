@@ -28,8 +28,8 @@ public partial class SlipPage : ContentPage
     {
         base.OnAppearing();
         var s = _state.StatsNow();
-        string sym = _state.Profile.Currency.Symbol();
-        KeepLabel.Text = $"{s.Days} total clean days\n{StatsCalculator.FormatMoney(s.Money, false)} {sym} saved\nAll badges & XP";
+        string money = StatsCalculator.FormatMoney(s.Money, _state.Profile.Currency, false);
+        KeepLabel.Text = $"{s.Days} total clean days\n{money} saved\nAll badges & XP";
         ResetLabel.Text = $"Current streak\n({s.CurrentStreak} days → 0, and day 1 starts now)";
     }
 

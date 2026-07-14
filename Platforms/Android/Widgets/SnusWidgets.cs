@@ -22,7 +22,7 @@ public class SnusWidget2x2 : AppWidgetProvider
         {
             var v = new RemoteViews(context.PackageName, Resource.Layout.widget_2x2);
             v.SetTextViewText(Resource.Id.w_day, $"{p.GetInt("day", 0)}d {p.GetInt("hour", 0)}h");
-            v.SetTextViewText(Resource.Id.w_money, $"{p.GetString("money", "0")} kr");
+            v.SetTextViewText(Resource.Id.w_money, p.GetString("money", "0"));
             appWidgetManager.UpdateAppWidget(id, v);
         }
     }
@@ -40,7 +40,10 @@ public class SnusWidget4x2 : AppWidgetProvider
         {
             var v = new RemoteViews(context.PackageName, Resource.Layout.widget_4x2);
             v.SetTextViewText(Resource.Id.w_day, $"{p.GetInt("day", 0)}d {p.GetInt("hour", 0)}h");
-            v.SetTextViewText(Resource.Id.w_money, $"{p.GetString("money", "0")} kr");
+            v.SetTextViewText(Resource.Id.w_money, p.GetString("money", "0"));
+            v.SetTextViewText(Resource.Id.w_avoided, p.GetInt("avoided", 0).ToString());
+            v.SetTextViewText(Resource.Id.w_avoided_cap, p.GetString("avoidedcap", "skipped"));
+            v.SetTextViewText(Resource.Id.w_wins, p.GetInt("wins", 0).ToString());
             v.SetTextViewText(Resource.Id.w_streak, $"🔥 {p.GetInt("streak", 0)}");
             v.SetTextViewText(Resource.Id.w_milestone, $"🏆 {p.GetString("milestone", "next milestone")} free");
             v.SetTextViewText(Resource.Id.w_daysleft, $"{p.GetString("daysleft", "")} to go");

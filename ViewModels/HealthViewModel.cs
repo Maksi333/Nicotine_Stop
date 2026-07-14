@@ -70,7 +70,7 @@ public partial class HealthViewModel : ObservableObject
             Milestones.Add(new HealthMilestoneVM
             {
                 Title = m.Title,
-                Body = m.Body,
+                Body = _state.Copy.HealthBody(m.Key),
                 IsDone = done,
                 IsInProgress = inProgress,
                 IsLocked = !done && !inProgress,

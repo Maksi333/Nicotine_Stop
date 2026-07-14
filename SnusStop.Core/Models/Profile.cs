@@ -8,9 +8,18 @@ public class Profile
 {
     public string Name { get; set; } = "";
 
+    /// <summary>
+    /// What the user is quitting. Drives all units and copy via <see cref="AddictionCopy"/>.
+    /// Defaults to Snus so profiles written before this existed keep working unchanged.
+    /// </summary>
+    public AddictionType Addiction { get; set; } = AddictionType.Snus;
+
     /// <summary>Instant the user became (or will become) nicotine-free, in UTC.</summary>
     public DateTime QuitUtc { get; set; }
 
+    // Units of the chosen addiction, not necessarily pouches: cigarettes-per-day and
+    // cigarettes-per-pack for a smoker. The names predate AddictionType and are kept so existing
+    // databases and CSV exports stay readable; the labels shown to users come from AddictionCopy.
     public int PouchesPerDay { get; set; } = 15;
     public int PouchesPerCan { get; set; } = 20;
     public decimal CanPrice { get; set; } = 45m;

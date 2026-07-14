@@ -46,4 +46,21 @@ public class MemoryMatchEngineTests
         }
         Assert.True(e.Won);
     }
+
+    [Theory]
+    [InlineData(8)]   // Small  — 4×4
+    [InlineData(12)]  // Medium — 4×6
+    [InlineData(18)]  // Large  — 6×6
+    public void Every_offered_board_size_deals_a_full_deck(int pairs)
+    {
+        var e = new MemoryMatchEngine(pairs, seed: 3);
+
+        Assert.Equal(pairs * 2, e.Cards.Count);
+        Assert.Equal(pairs, e.Cards.Select(c => c.PairId).Distinct().Count());
+
+        // Exactly two cards per pair, and each pair has its own distinct face — otherwise a
+        // "match" could be ambiguous on the big boards.
+        Assert.All(e.Cards.GroupBy(c => c.PairId), g => Assert.Equal(2, g.Count()));
+        Assert.Equal(pairs, e.Cards.Select(c => c.Face).Distinct().Count());
+    }
 }

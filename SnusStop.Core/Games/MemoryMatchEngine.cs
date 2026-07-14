@@ -15,7 +15,15 @@ public class MemoryCard
 /// </summary>
 public class MemoryMatchEngine
 {
-    private static readonly string[] Faces = { "🌱", "💚", "🏃", "💰", "🫁", "⭐", "🔥", "🎯" };
+    /// <summary>
+    /// One distinct face per pair. Needs at least as many entries as the largest board offers
+    /// (18 pairs), since a repeated face would make a match ambiguous.
+    /// </summary>
+    private static readonly string[] Faces =
+    {
+        "🌱", "💚", "🏃", "💰", "🫁", "⭐", "🔥", "🎯",
+        "🏆", "🎉", "🧘", "🍀", "💪", "🌈", "☀️", "🫀", "🥊", "🎁",
+    };
 
     public IReadOnlyList<MemoryCard> Cards { get; }
     public bool Won { get; private set; }

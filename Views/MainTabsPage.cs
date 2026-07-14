@@ -35,7 +35,7 @@ public class MainTabsPage : ContentPage
         _services = services;
         _notifications = notifications;
         _widgets = widgets;
-        _state.Changed += (_, _) => _widgets.Update(_state.Profile, _state.StatsNow());
+        _state.Changed += (_, _) => _widgets.Update(_state.Profile, _state.StatsNow(), _state.CravingsWon);
         BindingContext = shell;
 
         _tabs = new View[] { home, goals, health, journey };
@@ -79,7 +79,7 @@ public class MainTabsPage : ContentPage
         _clock.Start();
         await _goalsVm.LoadAsync();
         await _notifications.ApplyAllAsync(_state.Profile);
-        _widgets.Update(_state.Profile, _state.StatsNow());
+        _widgets.Update(_state.Profile, _state.StatsNow(), _state.CravingsWon);
     }
 
     private async void OnSos(object? sender, EventArgs e)

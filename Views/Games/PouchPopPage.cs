@@ -1,5 +1,6 @@
 using Microsoft.Maui.Controls.Shapes;
 using Nicotine_Stop.Services;
+using SnusStop.Core.Services;
 
 namespace Nicotine_Stop.Views.Games;
 
@@ -14,6 +15,7 @@ public class PouchPopPage : GameHostPage
     public PouchPopPage(AppState state, IServiceProvider services) : base(state, services)
     {
         GameXp = 10;
+        ActivityId = ActivityIds.PouchPop;
         Build();
     }
 

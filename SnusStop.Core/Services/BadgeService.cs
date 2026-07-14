@@ -19,7 +19,7 @@ public static class BadgeService
         var earned = new List<Badge>();
         void Add(string key, bool cond)
         {
-            if (cond) earned.Add(Badges.ByKey(key));
+            if (cond) earned.Add(Badges.ByKey(key, p.Addiction, p.Currency));
         }
 
         Add("day1", s.Days >= 1);
@@ -56,8 +56,9 @@ public static class BadgeService
     {
         var earned = Earned(p, events, s);
         var earnedKeys = earned.Select(b => b.Key).ToHashSet();
-        var ordered = Badges.All.Where(b => earnedKeys.Contains(b.Key)).ToList();
-        var locked = Badges.All.Where(b => !earnedKeys.Contains(b.Key)).ToList();
+        var all = Badges.For(p.Addiction, p.Currency);
+        var ordered = all.Where(b => earnedKeys.Contains(b.Key)).ToList();
+        var locked = all.Where(b => !earnedKeys.Contains(b.Key)).ToList();
         return (ordered, locked);
     }
 }

@@ -46,8 +46,8 @@ public partial class RemindWhyPage : ContentPage
 
         var goals = await _goals.AllAsync();
         decimal money = _state.StatsNow().Money;
-        string sym = _state.Profile.Currency.Symbol();
-        decimal canPrice = _state.Profile.CanPrice;
+        var cur = _state.Profile.Currency;
+        string priceStr = StatsCalculator.FormatMoney(_state.Profile.CanPrice, cur, false);
 
         var next = goals.OrderBy(g => g.SortOrder).FirstOrDefault(g => money < g.Price && g.Price > 0);
         if (next is not null)
@@ -57,14 +57,14 @@ public partial class RemindWhyPage : ContentPage
             double frac = next.Price > 0 ? Math.Clamp((double)(alloc / next.Price), 0, 1) : 0;
             ReasonsHost.Children.Add(GoalCard(
                 next.Name,
-                $"You're {StatsCalculator.FormatMoney(toGo, false)} {sym} away",
+                $"You're {StatsCalculator.FormatMoney(toGo, cur, false)} away",
                 frac,
-                $"One can skipped = {StatsCalculator.FormatMoney(canPrice, false)} {sym} closer. This craving is worth money."));
+                $"One {_state.Copy.Container} skipped = {priceStr} closer. This craving is worth money."));
         }
         else
         {
             ReasonsHost.Children.Add(SavingsCard(
-                $"One can skipped = {StatsCalculator.FormatMoney(canPrice, false)} {sym} closer to whatever you want. This craving is worth money."));
+                $"One {_state.Copy.Container} skipped = {priceStr} closer to whatever you want. This craving is worth money."));
         }
     }
 
@@ -168,9 +168,14 @@ public partial class RemindWhyPage : ContentPage
     {
         if (_completed) return;
         _completed = true;
-        await _state.AddEventAsync(EventLog.CravingWon(DateTime.UtcNow, "reasons", XpService.CravingXp));
+
+        // First read-through of the day pays XP; later ones still count the craving, but earn 0.
+        int xp = _services.GetRequiredService<IDailyXpService>()
+            .ClaimXp(ActivityIds.RemindMeWhy, XpService.CravingXp);
+
+        await _state.AddEventAsync(EventLog.CravingWon(DateTime.UtcNow, "reasons", xp));
         var celebrate = _services.GetRequiredService<CravingDefeatedPage>();
-        celebrate.Init(XpService.CravingXp);
+        celebrate.Init(xp);
         await Navigation.PushAsync(celebrate);
     }
 }

@@ -22,10 +22,18 @@ public partial class SettingsViewModel : ObservableObject
         _suppress = false;
     }
 
+    private AddictionCopy Copy => _state.Copy;
+
     public string QuitDateStr => _state.Profile.QuitUtc.ToLocalTime().ToString("dd MMM · HH:mm");
-    public string UsageStr => $"{_state.Profile.PouchesPerDay}/day · {_state.Profile.PouchesPerCan} per can";
-    public string PriceStr => $"{StatsCalculator.FormatMoney(_state.Profile.CanPrice, false)} {_state.Profile.Currency.Symbol()}";
+    public string UsageStr => $"{_state.Profile.PouchesPerDay}/day · {_state.Profile.PouchesPerCan} {Copy.PerContainerLabel}";
+    public string PriceStr => StatsCalculator.FormatMoney(_state.Profile.CanPrice, _state.Profile.Currency, false);
     public string CurrencyStr => _state.Profile.Currency.Code();
+
+    /// <summary>"Price per can" / "Price per pack".</summary>
+    public string PriceLabel => Copy.PricePerContainerLabel;
+
+    /// <summary>The row value for "What I quit": "Snus" / "Cigarettes".</summary>
+    public string AddictionStr => _state.Profile.Addiction == AddictionType.Cigarettes ? "Cigarettes" : "Snus";
 
     [ObservableProperty] private bool milestone;
     [ObservableProperty] private bool daily;
@@ -37,6 +45,8 @@ public partial class SettingsViewModel : ObservableObject
         OnPropertyChanged(nameof(UsageStr));
         OnPropertyChanged(nameof(PriceStr));
         OnPropertyChanged(nameof(CurrencyStr));
+        OnPropertyChanged(nameof(PriceLabel));
+        OnPropertyChanged(nameof(AddictionStr));
     }
 
     partial void OnMilestoneChanged(bool value)

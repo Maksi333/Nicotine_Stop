@@ -100,6 +100,22 @@ public static class StatsCalculator
         return 1.0;
     }
 
-    public static string FormatMoney(decimal v, bool withDecimals) =>
-        v.ToString(withDecimals ? "N2" : "N0", Da);
+    /// <summary>
+    /// The one way to render money. Produces the complete string — amount *and* the user's currency
+    /// symbol, grouped and positioned per that currency ("1.234,56 kr", "45 €", "$1,234.56").
+    ///
+    /// Never build a money string by hand: appending a literal "kr" is exactly how every screen
+    /// ended up ignoring the user's choice.
+    /// </summary>
+    public static string FormatMoney(decimal v, Currency currency, bool withDecimals)
+    {
+        string amount = v.ToString(withDecimals ? "N2" : "N0", currency.NumberCulture());
+        return currency.SymbolLeads()
+            ? $"{currency.Symbol()}{amount}"
+            : $"{amount} {currency.Symbol()}";
+    }
+
+    /// <summary>Grouped number with no currency symbol — for counts like pouches or cigarettes.</summary>
+    public static string FormatNumber(decimal v, Currency currency) =>
+        v.ToString("N0", currency.NumberCulture());
 }

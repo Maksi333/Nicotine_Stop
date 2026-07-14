@@ -9,6 +9,11 @@ public class ProfileRow
 {
     [PrimaryKey] public int Id { get; set; } = 1;   // single-row table
     public string Name { get; set; } = "";
+
+    // AddictionType. Added after 1.0: CreateTableAsync backfills it as 0 (Snus) on existing
+    // installs, which is exactly the pre-upgrade behaviour.
+    public int Addiction { get; set; }
+
     public DateTime QuitUtc { get; set; }
     public int PouchesPerDay { get; set; }
     public int PouchesPerCan { get; set; }

@@ -42,6 +42,7 @@ public class ProfileRepository(AppDatabase db) : IProfileRepository
         {
             Id = 1,
             Name = p.Name,
+            Addiction = (int)p.Addiction,
             QuitUtc = p.QuitUtc,
             PouchesPerDay = p.PouchesPerDay,
             PouchesPerCan = p.PouchesPerCan,
@@ -66,6 +67,7 @@ public class ProfileRepository(AppDatabase db) : IProfileRepository
     private static Profile Map(ProfileRow r) => new()
     {
         Name = r.Name,
+        Addiction = (AddictionType)r.Addiction,
         QuitUtc = DateTime.SpecifyKind(r.QuitUtc, DateTimeKind.Utc),
         PouchesPerDay = r.PouchesPerDay,
         PouchesPerCan = r.PouchesPerCan,

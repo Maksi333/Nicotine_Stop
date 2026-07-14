@@ -49,12 +49,29 @@ public partial class SettingsPage : ContentPage
         await SaveAsync();
     }
 
+    private async void OnEditAddiction(object? sender, EventArgs e)
+    {
+        string choice = await DisplayActionSheet("What are you quitting?", "Cancel", null, "Snus", "Cigarettes");
+        var picked = choice switch
+        {
+            "Snus" => AddictionType.Snus,
+            "Cigarettes" => AddictionType.Cigarettes,
+            _ => (AddictionType?)null,
+        };
+        if (picked is null || picked == _state.Profile.Addiction) return;
+
+        // Units carry over as-is: 20 a day stays 20 a day, it just reads as cigarettes now.
+        _state.Profile.Addiction = picked.Value;
+        await SaveAsync();
+    }
+
     private async void OnEditUsage(object? sender, EventArgs e)
     {
         var p = _state.Profile;
-        var d = await DisplayPromptAsync("Pouches per day", "On a typical day", initialValue: p.PouchesPerDay.ToString(), keyboard: Keyboard.Numeric);
+        var copy = _state.Copy;
+        var d = await DisplayPromptAsync(copy.UnitsPerDayLabel, "On a typical day", initialValue: p.PouchesPerDay.ToString(), keyboard: Keyboard.Numeric);
         if (int.TryParse(d, out var pd) && pd > 0) p.PouchesPerDay = pd;
-        var c = await DisplayPromptAsync("Pouches per can", "Check the label", initialValue: p.PouchesPerCan.ToString(), keyboard: Keyboard.Numeric);
+        var c = await DisplayPromptAsync(copy.UnitsPerContainerLabel, "Check the label", initialValue: p.PouchesPerCan.ToString(), keyboard: Keyboard.Numeric);
         if (int.TryParse(c, out var pc) && pc > 0) p.PouchesPerCan = pc;
         await SaveAsync();
     }
@@ -62,13 +79,16 @@ public partial class SettingsPage : ContentPage
     private async void OnEditPrice(object? sender, EventArgs e)
     {
         var p = _state.Profile;
-        var v = await DisplayPromptAsync("Price per can", "What one can costs", initialValue: ((int)p.CanPrice).ToString(), keyboard: Keyboard.Numeric);
+        var copy = _state.Copy;
+        var v = await DisplayPromptAsync(copy.PricePerContainerLabel, $"What one {copy.Container} costs", initialValue: ((int)p.CanPrice).ToString(), keyboard: Keyboard.Numeric);
         if (decimal.TryParse(v, out var price) && price > 0) { p.CanPrice = price; await SaveAsync(); }
     }
 
     private async void OnEditCurrency(object? sender, EventArgs e)
     {
-        var choice = await DisplayActionSheet("Currency", "Cancel", null, "DKK", "SEK", "NOK", "EUR");
+        // Built from Currencies.All so a new currency shows up here automatically.
+        var codes = Currencies.All.Select(c => c.Code()).ToArray();
+        var choice = await DisplayActionSheet("Currency", "Cancel", null, codes);
         if (choice is null or "Cancel") return;
         _state.Profile.Currency = CurrencyExtensions.Parse(choice);
         await SaveAsync();

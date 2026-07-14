@@ -36,6 +36,12 @@ public class AppState
         Raise();
     }
 
+    /// <summary>
+    /// Terminology for whatever the user is quitting. Every screen reads its units and copy from
+    /// here, so switching addiction in Settings re-labels the whole app.
+    /// </summary>
+    public AddictionCopy Copy => AddictionCopy.For(Profile.Addiction);
+
     public Stats StatsAt(DateTime nowUtc) => StatsCalculator.Compute(Profile, nowUtc, LastSlipUtc);
     public Stats StatsNow() => StatsAt(DateTime.UtcNow);
 

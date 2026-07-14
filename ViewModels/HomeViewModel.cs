@@ -42,8 +42,13 @@ public partial class HomeViewModel : ObservableObject
     public string Ss => _stats.Sec.ToString("D2");
     public string Ticker => $"{Hh}:{Mm}:{Ss}";
 
-    public string MoneyStr => StatsCalculator.FormatMoney(_stats.Money, true);
+    /// <summary>Complete money string, symbol included — e.g. "404,23 kr", "54,20 €", "$54.20".</summary>
+    public string MoneyStr => StatsCalculator.FormatMoney(_stats.Money, _state.Profile.Currency, true);
     public string PouchesAvoidedStr => _stats.PouchesAvoided.ToString();
+
+    /// <summary>"pouches skipped" or "cigarettes not smoked", per the user's addiction.</summary>
+    public string SkippedCaption => _state.Copy.SkippedCaption;
+
     public string StreakStr => _stats.CurrentStreak.ToString();
     public double RingProgress => _stats.RingProgress;
     public string MilestoneTitle => _stats.Next?.Title ?? "1 year";
@@ -90,6 +95,7 @@ public partial class HomeViewModel : ObservableObject
         RaiseLive();
         OnPropertyChanged(nameof(GreetingName));
         OnPropertyChanged(nameof(CurrencySymbol));
+        OnPropertyChanged(nameof(SkippedCaption));
         OnPropertyChanged(nameof(LevelNumber));
         OnPropertyChanged(nameof(LevelLabel));
         OnPropertyChanged(nameof(XpText));

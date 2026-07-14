@@ -11,9 +11,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical">
-        <View
+        <!-- ImageView, not View: RemoteViews only inflates @RemoteView-annotated classes,
+             and android.view.View is not one of them. -->
+        <ImageView
             android:layout_width="18dp"
             android:layout_height="18dp"
+            android:contentDescription="@null"
             android:background="@drawable/widget_dot" />
         <TextView
             android:layout_width="wrap_content"

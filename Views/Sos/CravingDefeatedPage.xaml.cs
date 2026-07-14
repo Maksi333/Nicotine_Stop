@@ -14,9 +14,12 @@ public partial class CravingDefeatedPage : ContentPage
         Helpers.SafeArea.ApplyInsets(this, top: true, bottom: true);
     }
 
+    /// <param name="xp">XP actually granted. 0 when the activity's daily XP was already claimed —
+    /// the win still counts, so only the XP chip is dropped, not the celebration.</param>
     public void Init(int xp)
     {
         int wins = _state.CravingsWon;
+        XpChip.IsVisible = xp > 0;
         XpLabel.Text = $"+{xp} XP";
         WinsLabel.Text = $"🥊 {wins}";
         SubLabel.Text = Ordinal(wins) is { } ord

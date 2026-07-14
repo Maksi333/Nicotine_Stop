@@ -9,7 +9,7 @@ namespace Nicotine_Stop.Services;
 /// <summary>Persists a compact stats snapshot for the home-screen widgets and pokes them to refresh.</summary>
 public class WidgetUpdateService
 {
-    public void Update(Profile profile, Stats s)
+    public void Update(Profile profile, Stats s, int cravingsWon)
     {
         var ctx = global::Android.App.Application.Context;
         if (ctx is null) return;
@@ -20,11 +20,20 @@ public class WidgetUpdateService
 
         editor.PutInt("day", s.Days);
         editor.PutInt("hour", s.Hours);
-        editor.PutString("money", StatsCalculator.FormatMoney(s.Money, false));
+        // Store the finished money string, symbol and all — the widget process has no access to the
+        // profile, so it must not try to append a currency itself.
+        editor.PutString("money", StatsCalculator.FormatMoney(s.Money, profile.Currency, false));
         editor.PutInt("streak", s.CurrentStreak);
         editor.PutString("milestone", s.Next?.Title ?? "1 year");
         editor.PutInt("mpct", (int)(s.RingProgress * 100));
         editor.PutString("daysleft", StatsCalculator.DaysUntilNextLabel(s));
+
+        // The 4x2 widget's extra columns. The caption follows the addiction, so a smoker's widget
+        // reads "not smoked" rather than "skipped".
+        editor.PutInt("avoided", s.PouchesAvoided);
+        editor.PutString("avoidedcap", AddictionCopy.For(profile.Addiction).SkippedShort);
+        editor.PutInt("wins", cravingsWon);
+
         editor.Apply();
 
         Trigger(ctx, typeof(SnusWidget2x2));

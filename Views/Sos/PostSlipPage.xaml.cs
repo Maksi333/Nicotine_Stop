@@ -30,10 +30,10 @@ public partial class PostSlipPage : ContentPage
     private void Build()
     {
         var s = _state.StatsNow();
-        string sym = _state.Profile.Currency.Symbol();
+        string money = StatsCalculator.FormatMoney(s.Money, _state.Profile.Currency, false);
         int best = BestStreak();
         RetainedLabel.Text =
-            $"Your {s.Days} total clean days and {StatsCalculator.FormatMoney(s.Money, false)} {sym} are still yours. Best streak to beat: {best} days.";
+            $"Your {s.Days} total clean days and {money} are still yours. Best streak to beat: {best} days.";
 
         var counts = _state.Events
             .Where(e => e.Type == EventType.Slip && e.Trigger != Trigger.None)
