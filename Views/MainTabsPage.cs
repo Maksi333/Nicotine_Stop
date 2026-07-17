@@ -56,6 +56,8 @@ public class MainTabsPage : ContentPage
 
         _shell.PropertyChanged += OnShellChanged;
         UpdateTabs();
+
+        WidgetNavigation.SosRequested += OnSosRequested;
     }
 
     private void OnShellChanged(object? sender, PropertyChangedEventArgs e)
@@ -80,10 +82,28 @@ public class MainTabsPage : ContentPage
         await _goalsVm.LoadAsync();
         await _notifications.ApplyAllAsync(_state.Profile);
         _widgets.Update(_state.Profile, _state.LastSlipUtc, _state.CravingsWon);
+
+        // A widget SOS tap during cold start set a pending flag before this page existed.
+        if (WidgetNavigation.ConsumePending())
+            await OpenSosAsync();
     }
 
-    private async void OnSos(object? sender, EventArgs e)
+    private async void OnSos(object? sender, EventArgs e) => await OpenSosAsync();
+
+    private void OnSosRequested()
     {
+        // Fired from a widget deep link (may be off the UI thread). Marshal to UI; only act once
+        // loaded — the cold-start case is picked up by ConsumePending() in OnAppearing.
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            if (_loaded && WidgetNavigation.ConsumePending())
+                await OpenSosAsync();
+        });
+    }
+
+    private async Task OpenSosAsync()
+    {
+        if (Navigation.ModalStack.Count > 0) return;   // SOS (or another modal) already showing
         var sos = _services.GetRequiredService<Sos.SosTakeoverPage>();
         await Navigation.PushModalAsync(new NavigationPage(sos));
     }

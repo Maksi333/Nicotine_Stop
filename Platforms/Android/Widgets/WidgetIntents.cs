@@ -24,4 +24,15 @@ internal static class WidgetIntents
             context, requestCode, intent,
             PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable)!;
     }
+
+    /// <summary>Opens the app straight into the Craving SOS takeover (via MainActivity's deep-link).</summary>
+    public static PendingIntent Sos(Context context, int requestCode)
+    {
+        var intent = new Intent(context, typeof(MainActivity));
+        intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask);
+        intent.PutExtra("navigate", "sos");
+        return PendingIntent.GetActivity(
+            context, requestCode, intent,
+            PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable)!;
+    }
 }

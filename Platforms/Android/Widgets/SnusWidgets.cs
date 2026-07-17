@@ -148,8 +148,7 @@ public class SnusWidgetSos : AppWidgetProvider
             v.SetProgressBar(Resource.Id.w_bar, 100, d.MilestonePct, false);
             v.SetTextViewText(Resource.Id.w_mscap, $"🏆 {d.DaysLeft} until {d.Milestone} free");
             v.SetOnClickPendingIntent(Resource.Id.w_root, WidgetIntents.Home(context, WidgetIntents.SosHome));
-            // SOS button opens Home for now; Task 6 repoints it to the SOS deep link.
-            v.SetOnClickPendingIntent(Resource.Id.w_sos, WidgetIntents.Home(context, WidgetIntents.SosButton));
+            v.SetOnClickPendingIntent(Resource.Id.w_sos, WidgetIntents.Sos(context, WidgetIntents.SosButton));
             appWidgetManager.UpdateAppWidget(id, v);
         }
     }
