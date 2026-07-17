@@ -25,9 +25,7 @@ internal readonly record struct WidgetView(
     double RingProgress,   // 0..1, same progress for the drawn ring arc (5b)
     string DaysLeft,       // "2 days"
     int Avoided,
-    string SkippedCaption, // addiction-aware: "pouches skipped" / "cigarettes not smoked"
-    string AvoidedCap,     // addiction-aware short: "skipped" / "not smoked"
-    int Wins);
+    string SkippedCaption);// addiction-aware: "pouches skipped" / "cigarettes not smoked"
 
 /// <summary>
 /// Turns the raw plan stored in prefs into current stats. Because the widget process runs on its
@@ -40,14 +38,13 @@ internal static class WidgetData
     public static WidgetView Read(ISharedPreferences p)
     {
         long quitTicks = p.GetLong("quitTicks", 0L);
-        int wins = p.GetInt("wins", 0);
 
         // No plan stored yet (widget added before the app was opened). Show neutral zeros.
         if (quitTicks <= 0)
             return new WidgetView(
                 Days: 0, Day: "0d 0h", Money: "0", MoneyInt: "0", Streak: 0,
                 Milestone: "next milestone", MilestonePct: 0, RingProgress: 0d, DaysLeft: "",
-                Avoided: 0, SkippedCaption: "skipped", AvoidedCap: "skipped", Wins: wins);
+                Avoided: 0, SkippedCaption: "skipped");
 
         var profile = new Profile
         {
@@ -76,9 +73,7 @@ internal static class WidgetData
             RingProgress: s.RingProgress,
             DaysLeft: StatsCalculator.DaysUntilNextLabel(s),
             Avoided: s.PouchesAvoided,
-            SkippedCaption: copy.SkippedCaption,
-            AvoidedCap: copy.SkippedShort,
-            Wins: wins);
+            SkippedCaption: copy.SkippedCaption);
     }
 
     private static decimal ParseDecimal(string? v) =>
