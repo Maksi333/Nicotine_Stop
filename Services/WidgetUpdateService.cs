@@ -1,15 +1,19 @@
+using System.Globalization;
 using Android.Appwidget;
 using Android.Content;
 using Nicotine_Stop.Platforms.Android.Widgets;
 using SnusStop.Core.Models;
-using SnusStop.Core.Services;
 
 namespace Nicotine_Stop.Services;
 
-/// <summary>Persists a compact stats snapshot for the home-screen widgets and pokes them to refresh.</summary>
+/// <summary>
+/// Persists the raw quit plan the widgets need and pokes them to refresh. The widgets recompute
+/// live stats from this on their own hourly schedule, so they stay current even while the app is
+/// closed — we deliberately do NOT store pre-computed day/money values that would freeze.
+/// </summary>
 public class WidgetUpdateService
 {
-    public void Update(Profile profile, Stats s, int cravingsWon)
+    public void Update(Profile profile, DateTime? lastSlipUtc, int cravingsWon)
     {
         var ctx = global::Android.App.Application.Context;
         if (ctx is null) return;
@@ -18,20 +22,18 @@ public class WidgetUpdateService
         var editor = prefs?.Edit();
         if (editor is null) return;
 
-        editor.PutInt("day", s.Days);
-        editor.PutInt("hour", s.Hours);
-        // Store the finished money string, symbol and all — the widget process has no access to the
-        // profile, so it must not try to append a currency itself.
-        editor.PutString("money", StatsCalculator.FormatMoney(s.Money, profile.Currency, false));
-        editor.PutInt("streak", s.CurrentStreak);
-        editor.PutString("milestone", s.Next?.Title ?? "1 year");
-        editor.PutInt("mpct", (int)(s.RingProgress * 100));
-        editor.PutString("daysleft", StatsCalculator.DaysUntilNextLabel(s));
+        // Raw inputs only. Everything time-derived (days, money, streak, milestone progress) is
+        // computed by the widget at display time — see WidgetData.Read.
+        editor.PutLong("quitTicks", profile.QuitUtc.Ticks);
+        editor.PutInt("ppd", profile.PouchesPerDay);
+        editor.PutInt("ppc", profile.PouchesPerCan);
+        editor.PutString("price", profile.CanPrice.ToString(CultureInfo.InvariantCulture));
+        editor.PutInt("cur", (int)profile.Currency);
+        editor.PutInt("addiction", (int)profile.Addiction);
+        editor.PutLong("slipTicks", lastSlipUtc?.Ticks ?? 0L);
 
-        // The 4x2 widget's extra columns. The caption follows the addiction, so a smoker's widget
-        // reads "not smoked" rather than "skipped".
-        editor.PutInt("avoided", s.PouchesAvoided);
-        editor.PutString("avoidedcap", AddictionCopy.For(profile.Addiction).SkippedShort);
+        // Cravings won comes from the events log, which the widget can't read, so it stays a
+        // stored count rather than something recomputed.
         editor.PutInt("wins", cravingsWon);
 
         editor.Apply();

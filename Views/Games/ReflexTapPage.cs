@@ -48,7 +48,8 @@ public class ReflexTapPage : GameHostPage
         chips.Add(Chip("⏱️", "TIME LEFT", _timerLabel), 2);
 
         _field = new AbsoluteLayout();
-        var panel = new Border { StrokeThickness = 0, BackgroundColor = Color.FromArgb("#14FFFFFF"), StrokeShape = new RoundRectangle { CornerRadius = 20 }, Content = _field, Padding = 6 };
+        // Margin keeps the play field from butting up against the chip row above it.
+        var panel = new Border { StrokeThickness = 0, BackgroundColor = Color.FromArgb("#14FFFFFF"), StrokeShape = new RoundRectangle { CornerRadius = 20 }, Content = _field, Padding = 6, Margin = new Thickness(0, 14, 0, 0) };
 
         var outer = new Grid
         {
@@ -117,21 +118,37 @@ public class ReflexTapPage : GameHostPage
         return _celebration;
     }
 
+    /// <summary>
+    /// A centered vertical stat tile: value on top, emoji + caption below. Vertical (not the old
+    /// side-by-side row) so even "TIME LEFT" fits within a third of the screen without clipping.
+    /// </summary>
     private static Border Chip(string emoji, string caption, Label value)
     {
+        value.HorizontalOptions = LayoutOptions.Center;
+        value.HorizontalTextAlignment = TextAlignment.Center;
+
         return new Border
         {
             StrokeThickness = 0,
             BackgroundColor = Color.FromArgb("#14FFFFFF"),
             StrokeShape = new RoundRectangle { CornerRadius = 16 },
-            Padding = new Thickness(14, 10),
-            Content = new HorizontalStackLayout
+            Padding = new Thickness(6, 12),
+            Content = new VerticalStackLayout
             {
-                Spacing = 8,
+                Spacing = 3,
+                HorizontalOptions = LayoutOptions.Center,
                 Children =
                 {
-                    new Label { Text = emoji, FontSize = 16, VerticalOptions = LayoutOptions.Center },
-                    new VerticalStackLayout { Children = { value, new Label { Text = caption, FontFamily = "NunitoExtraBold", FontSize = 10, TextColor = Color.FromArgb("#B9B4E3") } } },
+                    value,
+                    new Label
+                    {
+                        Text = $"{emoji} {caption}",
+                        FontFamily = "NunitoExtraBold",
+                        FontSize = 10,
+                        TextColor = Color.FromArgb("#B9B4E3"),
+                        HorizontalTextAlignment = TextAlignment.Center,
+                        LineBreakMode = LineBreakMode.NoWrap,
+                    },
                 },
             },
         };
