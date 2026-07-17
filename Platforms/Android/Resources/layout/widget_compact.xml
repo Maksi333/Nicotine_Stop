@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 2x2 compact widget (design 5a): brand mark + streak, day hero, money, milestone bar.
+     Only @RemoteView classes (LinearLayout/TextView/ImageView/ProgressBar) — no plain <View>. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/w_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_bg"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:contentDescription="@null"
+            android:src="@drawable/widget_puff" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:text="SNUSSTOP"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08"
+            android:textColor="@color/widget_muted" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+        <TextView
+            android:id="@+id/w_streak"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🔥 0"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="@color/widget_flame" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/w_day"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:text="0d 0h"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:maxLines="1"
+        android:fontFamily="sans-serif-black"
+        android:textColor="@color/widget_ink" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/w_money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 kr"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:fontFamily="sans-serif-black"
+            android:textColor="@color/widget_primary" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:text="saved"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:textColor="@color/widget_muted" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="8dp">
+        <ProgressBar
+            android:id="@+id/w_progress"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="8dp"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="@color/widget_fill"
+            android:progressBackgroundTint="@color/widget_track" />
+        <TextView
+            android:id="@+id/w_ms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="2 weeks"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:textColor="@color/widget_muted" />
+    </LinearLayout>
+</LinearLayout>

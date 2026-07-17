@@ -85,19 +85,23 @@ internal static class WidgetData
         decimal.TryParse(v, NumberStyles.Number, CultureInfo.InvariantCulture, out var d) ? d : 0m;
 }
 
-[BroadcastReceiver(Label = "SnusStop · day & money", Exported = false)]
+[BroadcastReceiver(Label = "SnusStop · Compact", Exported = false)]
 [IntentFilter(new[] { AppWidgetManager.ActionAppwidgetUpdate })]
-[MetaData("android.appwidget.provider", Resource = "@xml/widget_2x2_info")]
-public class SnusWidget2x2 : AppWidgetProvider
+[MetaData("android.appwidget.provider", Resource = "@xml/widget_compact_info")]
+public class SnusWidgetCompact : AppWidgetProvider
 {
     public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
     {
         var d = WidgetData.Read(context.GetSharedPreferences(WidgetPrefs.Name, FileCreationMode.Private)!);
         foreach (var id in appWidgetIds)
         {
-            var v = new RemoteViews(context.PackageName, Resource.Layout.widget_2x2);
+            var v = new RemoteViews(context.PackageName, Resource.Layout.widget_compact);
             v.SetTextViewText(Resource.Id.w_day, d.Day);
             v.SetTextViewText(Resource.Id.w_money, d.Money);
+            v.SetTextViewText(Resource.Id.w_streak, $"🔥 {d.Streak}");
+            v.SetTextViewText(Resource.Id.w_ms, d.Milestone);
+            v.SetProgressBar(Resource.Id.w_progress, 100, d.MilestonePct, false);
+            v.SetOnClickPendingIntent(Resource.Id.w_root, WidgetIntents.Home(context, WidgetIntents.CompactHome));
             appWidgetManager.UpdateAppWidget(id, v);
         }
     }

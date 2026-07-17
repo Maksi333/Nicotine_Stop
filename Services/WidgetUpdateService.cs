@@ -38,7 +38,7 @@ public class WidgetUpdateService
 
         editor.Apply();
 
-        Trigger(ctx, typeof(SnusWidget2x2));
+        Trigger(ctx, typeof(SnusWidgetCompact));
         Trigger(ctx, typeof(SnusWidget4x2));
     }
 
