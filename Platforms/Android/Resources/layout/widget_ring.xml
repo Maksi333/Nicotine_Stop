@@ -12,12 +12,45 @@
     android:paddingTop="16dp"
     android:paddingBottom="16dp">
 
-    <ImageView
-        android:id="@+id/w_ring"
+    <!-- Ring arcs are a bitmap (w_ring); the day count + caption are themed TextViews overlaid on
+         top so they re-colour instantly on a light/dark switch. -->
+    <FrameLayout
         android:layout_width="118dp"
         android:layout_height="118dp"
-        android:layout_marginEnd="18dp"
-        android:contentDescription="@null" />
+        android:layout_marginEnd="18dp">
+        <ImageView
+            android:id="@+id/w_ring"
+            android:layout_width="118dp"
+            android:layout_height="118dp"
+            android:contentDescription="@null" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="center">
+            <TextView
+                android:id="@+id/w_ringdays"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="34sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:includeFontPadding="false"
+                android:fontFamily="sans-serif-black"
+                android:textColor="@color/widget_ink" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="days free"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:includeFontPadding="false"
+                android:textColor="@color/widget_muted" />
+        </LinearLayout>
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="0dp"

@@ -79,13 +79,15 @@ public class MainTabsPage : ContentPage
 
         await _state.LoadAsync();
         _clock.Start();
+
+        // A widget SOS tap during cold start set a pending flag before this page existed. Open the
+        // takeover now — before the notification prompt — so it isn't stuck behind that dialog.
+        if (WidgetNavigation.ConsumePending())
+            await OpenSosAsync();
+
         await _goalsVm.LoadAsync();
         await _notifications.ApplyAllAsync(_state.Profile);
         _widgets.Update(_state.Profile, _state.LastSlipUtc, _state.CravingsWon);
-
-        // A widget SOS tap during cold start set a pending flag before this page existed.
-        if (WidgetNavigation.ConsumePending())
-            await OpenSosAsync();
     }
 
     private async void OnSos(object? sender, EventArgs e) => await OpenSosAsync();

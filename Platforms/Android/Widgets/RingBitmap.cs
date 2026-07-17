@@ -11,14 +11,15 @@ using RectF = Android.Graphics.RectF;
 namespace Nicotine_Stop.Platforms.Android.Widgets;
 
 /// <summary>
-/// Draws the 5b progress ring (track + round-capped fill arc) with the day count and "days free"
-/// caption centred inside it. RemoteViews cannot host a custom view, so the whole thing is rendered
-/// to a Bitmap and pushed via SetImageViewBitmap. Colours come from theme resources, so it matches
-/// the current light/dark configuration.
+/// Draws the 5b progress ring (track + round-capped fill arc). Only the arcs are painted here;
+/// the day count and "days free" caption are themed TextViews overlaid on top in the layout, so
+/// they re-colour instantly on a light/dark switch rather than staying frozen in a bitmap.
+/// RemoteViews cannot host a custom view, so the arcs are rendered to a Bitmap and pushed via
+/// SetImageViewBitmap. Colours come from theme resources, matching the current configuration.
 /// </summary>
 internal static class RingBitmap
 {
-    public static Bitmap Draw(Context context, int days, double progress)
+    public static Bitmap Draw(Context context, double progress)
     {
         var res = context.Resources!;
         float density = res.DisplayMetrics!.Density;
@@ -30,8 +31,6 @@ internal static class RingBitmap
 
         var trackColor = new Color(ContextCompat.GetColor(context, Resource.Color.widget_ring_track));
         var fillColor = new Color(ContextCompat.GetColor(context, Resource.Color.widget_fill));
-        var inkColor = new Color(ContextCompat.GetColor(context, Resource.Color.widget_ink));
-        var mutedColor = new Color(ContextCompat.GetColor(context, Resource.Color.widget_muted));
 
         float inset = stroke / 2f + density;
         var rect = new RectF(inset, inset, size - inset, size - inset);
@@ -45,18 +44,6 @@ internal static class RingBitmap
         fill.StrokeCap = Paint.Cap.Round;
         float sweep = (float)(System.Math.Clamp(progress, 0d, 1d) * 360d);
         canvas.DrawArc(rect, -90f, sweep, false, fill);
-
-        float cx = size / 2f;
-        using var num = new Paint(PaintFlags.AntiAlias) { Color = inkColor, TextAlign = Paint.Align.Center };
-        num.SetTypeface(Typeface.Create("sans-serif-black", TypefaceStyle.Bold));
-        num.TextSize = 34 * density;
-        using var cap = new Paint(PaintFlags.AntiAlias) { Color = mutedColor, TextAlign = Paint.Align.Center };
-        cap.SetTypeface(Typeface.Create("sans-serif", TypefaceStyle.Bold));
-        cap.TextSize = 10 * density;
-
-        // Day number baseline sits just above centre; caption below it.
-        canvas.DrawText(days.ToString(), cx, cx + 6 * density, num);
-        canvas.DrawText("days free", cx, cx + 22 * density, cap);
 
         return bmp;
     }

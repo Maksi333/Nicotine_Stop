@@ -110,11 +110,12 @@ public class SnusWidgetRing : AppWidgetProvider
     public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
     {
         var d = WidgetData.Read(context.GetSharedPreferences(WidgetPrefs.Name, FileCreationMode.Private)!);
-        var ring = RingBitmap.Draw(context, d.Days, d.RingProgress);
+        var ring = RingBitmap.Draw(context, d.RingProgress);
         foreach (var id in appWidgetIds)
         {
             var v = new RemoteViews(context.PackageName, Resource.Layout.widget_ring);
             v.SetImageViewBitmap(Resource.Id.w_ring, ring);
+            v.SetTextViewText(Resource.Id.w_ringdays, d.Days.ToString());
             v.SetTextViewText(Resource.Id.w_money, d.Money);
             v.SetTextViewText(Resource.Id.w_avoided, d.Avoided.ToString());
             v.SetTextViewText(Resource.Id.w_skipcap, d.SkippedCaption);
