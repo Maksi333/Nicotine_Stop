@@ -15,8 +15,19 @@ public static class WidgetPrefs
 
 /// <summary>The values a widget renders, recomputed for the current moment.</summary>
 internal readonly record struct WidgetView(
-    string Day, string Money, int Streak, string Milestone,
-    int MilestonePct, string DaysLeft, int Avoided, string AvoidedCap, int Wins);
+    int Days,              // raw day count — ring centre (5b) and "Day N" message (5c)
+    string Day,            // "12d 4h" — compact hero (5a)
+    string Money,          // "156 kr" — amount with the user's currency symbol
+    string MoneyInt,       // "156" — grouped amount, NO symbol, for the tight 5c chip
+    int Streak,
+    string Milestone,      // next-milestone title, e.g. "2 weeks"
+    int MilestonePct,      // 0..100, progress toward the next milestone (bars)
+    double RingProgress,   // 0..1, same progress for the drawn ring arc (5b)
+    string DaysLeft,       // "2 days"
+    int Avoided,
+    string SkippedCaption, // addiction-aware: "pouches skipped" / "cigarettes not smoked"
+    string AvoidedCap,     // addiction-aware short: "skipped" / "not smoked"
+    int Wins);
 
 /// <summary>
 /// Turns the raw plan stored in prefs into current stats. Because the widget process runs on its
@@ -33,7 +44,10 @@ internal static class WidgetData
 
         // No plan stored yet (widget added before the app was opened). Show neutral zeros.
         if (quitTicks <= 0)
-            return new WidgetView("0d 0h", "0", 0, "next milestone", 0, "", 0, "skipped", wins);
+            return new WidgetView(
+                Days: 0, Day: "0d 0h", Money: "0", MoneyInt: "0", Streak: 0,
+                Milestone: "next milestone", MilestonePct: 0, RingProgress: 0d, DaysLeft: "",
+                Avoided: 0, SkippedCaption: "skipped", AvoidedCap: "skipped", Wins: wins);
 
         var profile = new Profile
         {
@@ -50,15 +64,20 @@ internal static class WidgetData
 
         var s = StatsCalculator.Compute(profile, DateTime.UtcNow, lastSlip);
 
+        var copy = AddictionCopy.For(profile.Addiction);
         return new WidgetView(
+            Days: s.Days,
             Day: $"{s.Days}d {s.Hours}h",
             Money: StatsCalculator.FormatMoney(s.Money, profile.Currency, false),
+            MoneyInt: StatsCalculator.FormatNumber(s.Money, profile.Currency),
             Streak: s.CurrentStreak,
             Milestone: s.Next?.Title ?? "1 year",
             MilestonePct: (int)(s.RingProgress * 100),
+            RingProgress: s.RingProgress,
             DaysLeft: StatsCalculator.DaysUntilNextLabel(s),
             Avoided: s.PouchesAvoided,
-            AvoidedCap: AddictionCopy.For(profile.Addiction).SkippedShort,
+            SkippedCaption: copy.SkippedCaption,
+            AvoidedCap: copy.SkippedShort,
             Wins: wins);
     }
 
