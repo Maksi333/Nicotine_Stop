@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Shadow disc, sitting 4dp lower -->
+    <item android:top="4dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/widget_sos_shadow" />
+        </shape>
+    </item>
+    <!-- Coral disc on top, leaving a 4dp shadow lip at the bottom -->
+    <item android:bottom="4dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/widget_sos" />
+        </shape>
+    </item>
+</layer-list>

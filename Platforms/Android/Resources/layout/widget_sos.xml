@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 4x2 Puff + SOS widget (design 5c): Puff, message + chips + milestone bar, coral SOS button. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/w_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="@drawable/widget_bg"
+    android:paddingLeft="18dp"
+    android:paddingRight="18dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp">
+
+    <ImageView
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_marginEnd="14dp"
+        android:contentDescription="@null"
+        android:src="@drawable/widget_puff" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/w_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Day 0 — Puff's proud of you."
+            android:textSize="13.5sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:fontFamily="sans-serif-black"
+            android:textColor="@color/widget_ink" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="6dp">
+            <TextView
+                android:id="@+id/w_money2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/widget_chip_mint"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:text="💰 0"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="@color/widget_primary" />
+            <TextView
+                android:id="@+id/w_streak2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/widget_chip_coral"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:text="🔥 0d"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="@color/widget_coral_text" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/w_bar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="9dp"
+            android:layout_marginTop="6dp"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="@color/widget_fill"
+            android:progressBackgroundTint="@color/widget_track" />
+
+        <TextView
+            android:id="@+id/w_mscap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="🏆 0 days until 2 weeks free"
+            android:textSize="9.5sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:textColor="@color/widget_muted" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/w_sos"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="12dp"
+        android:background="@drawable/widget_sos_circle">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="SOS"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.04"
+            android:fontFamily="sans-serif-black"
+            android:textColor="#FFFFFF" />
+    </FrameLayout>
+</LinearLayout>

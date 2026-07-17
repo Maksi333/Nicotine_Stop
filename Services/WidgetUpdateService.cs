@@ -40,6 +40,7 @@ public class WidgetUpdateService
 
         Trigger(ctx, typeof(SnusWidgetCompact));
         Trigger(ctx, typeof(SnusWidgetRing));
+        Trigger(ctx, typeof(SnusWidgetSos));
     }
 
     private static void Trigger(Context ctx, Type providerType)

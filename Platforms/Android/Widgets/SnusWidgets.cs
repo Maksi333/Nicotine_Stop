@@ -130,3 +130,27 @@ public class SnusWidgetRing : AppWidgetProvider
         }
     }
 }
+
+[BroadcastReceiver(Label = "SnusStop · Puff + SOS", Exported = false)]
+[IntentFilter(new[] { AppWidgetManager.ActionAppwidgetUpdate })]
+[MetaData("android.appwidget.provider", Resource = "@xml/widget_sos_info")]
+public class SnusWidgetSos : AppWidgetProvider
+{
+    public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
+    {
+        var d = WidgetData.Read(context.GetSharedPreferences(WidgetPrefs.Name, FileCreationMode.Private)!);
+        foreach (var id in appWidgetIds)
+        {
+            var v = new RemoteViews(context.PackageName, Resource.Layout.widget_sos);
+            v.SetTextViewText(Resource.Id.w_msg, $"Day {d.Days} — Puff's proud of you.");
+            v.SetTextViewText(Resource.Id.w_money2, $"💰 {d.MoneyInt}");
+            v.SetTextViewText(Resource.Id.w_streak2, $"🔥 {d.Streak}d");
+            v.SetProgressBar(Resource.Id.w_bar, 100, d.MilestonePct, false);
+            v.SetTextViewText(Resource.Id.w_mscap, $"🏆 {d.DaysLeft} until {d.Milestone} free");
+            v.SetOnClickPendingIntent(Resource.Id.w_root, WidgetIntents.Home(context, WidgetIntents.SosHome));
+            // SOS button opens Home for now; Task 6 repoints it to the SOS deep link.
+            v.SetOnClickPendingIntent(Resource.Id.w_sos, WidgetIntents.Home(context, WidgetIntents.SosButton));
+            appWidgetManager.UpdateAppWidget(id, v);
+        }
+    }
+}
