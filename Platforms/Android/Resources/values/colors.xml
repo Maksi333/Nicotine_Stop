@@ -12,4 +12,12 @@
     <color name="widget_pill">#EAF7F0</color>
     <color name="widget_flame">#E8590C</color>
     <color name="widget_track">#E9F3EC</color>
+
+    <!-- Widget: ring, bars, chips, SOS (added for 5a/5b/5c widgets) -->
+    <color name="widget_ring_track">#E3EEE7</color>
+    <color name="widget_fill">#14B36B</color>
+    <color name="widget_chip_coral">#FDEEEC</color>
+    <color name="widget_coral_text">#D94F44</color>
+    <color name="widget_sos">#FF6B5E</color>
+    <color name="widget_sos_shadow">#D94F44</color>
 </resources>

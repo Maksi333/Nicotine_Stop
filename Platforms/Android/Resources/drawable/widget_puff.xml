@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Placeholder "Puff" mascot. Swap this single asset for final brand art later.
+     100x100 viewport; scales to any dp size the layout requests (18dp compact, 78dp on 5c). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="78dp"
+    android:height="78dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <!-- Face -->
+    <path android:fillColor="#BDF0D4"
+        android:pathData="M50,2 C76.5,2 98,23.5 98,50 C98,76.5 76.5,98 50,98 C23.5,98 2,76.5 2,50 C2,23.5 23.5,2 50,2 Z" />
+    <!-- Cheeks -->
+    <path android:fillColor="#FFB1A6" android:fillAlpha="0.85"
+        android:pathData="M18,54.5 a6,3.5 0 1,0 12,0 a6,3.5 0 1,0 -12,0 Z" />
+    <path android:fillColor="#FFB1A6" android:fillAlpha="0.85"
+        android:pathData="M70,54.5 a6,3.5 0 1,0 12,0 a6,3.5 0 1,0 -12,0 Z" />
+    <!-- Eyes -->
+    <path android:fillColor="#17322B"
+        android:pathData="M34,39 a4,5 0 1,0 8,0 a4,5 0 1,0 -8,0 Z" />
+    <path android:fillColor="#17322B"
+        android:pathData="M58,39 a4,5 0 1,0 8,0 a4,5 0 1,0 -8,0 Z" />
+    <!-- Smile -->
+    <path android:strokeColor="#17322B" android:strokeWidth="3.5"
+        android:strokeLineCap="round" android:fillColor="#00000000"
+        android:pathData="M39,58 Q50,69 61,58" />
+</vector>
