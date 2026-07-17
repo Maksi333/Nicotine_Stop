@@ -157,11 +157,15 @@
                     </Border>
 
                     <Label Text="CURRENCY" Style="{StaticResource Overline}" Margin="0,14,0,0" />
-                    <HorizontalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding CurrencyChips}">
+                    <!-- FlexLayout wraps the chips to a second row so every currency stays visible;
+                         a plain HorizontalStackLayout ran them off-screen once USD was added. Per-chip
+                         Margin supplies the gaps FlexLayout has no Spacing for. -->
+                    <FlexLayout Wrap="Wrap" AlignItems="Start" BindableLayout.ItemsSource="{Binding CurrencyChips}">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate>
                                 <Border StrokeThickness="1.5" Stroke="{DynamicResource CardBorder}"
-                                        BackgroundColor="{DynamicResource Card}" Padding="18,10" StrokeShape="RoundRectangle 14">
+                                        BackgroundColor="{DynamicResource Card}" Padding="18,10" StrokeShape="RoundRectangle 14"
+                                        Margin="0,0,10,10">
                                     <Border.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding BindingContext.SelectCurrencyCommand, Source={x:Reference Root}}"
                                                               CommandParameter="{Binding .}" />
@@ -183,7 +187,7 @@
                                 </Border>
                             </DataTemplate>
                         </BindableLayout.ItemTemplate>
-                    </HorizontalStackLayout>
+                    </FlexLayout>
 
                     <Border BackgroundColor="{DynamicResource GoldTint}" StrokeThickness="0" Padding="16,12"
                             StrokeShape="RoundRectangle 16" Margin="0,16,0,0">
