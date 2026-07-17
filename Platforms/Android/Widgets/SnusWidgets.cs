@@ -107,26 +107,25 @@ public class SnusWidgetCompact : AppWidgetProvider
     }
 }
 
-[BroadcastReceiver(Label = "SnusStop · full stats", Exported = false)]
+[BroadcastReceiver(Label = "SnusStop · Progress ring", Exported = false)]
 [IntentFilter(new[] { AppWidgetManager.ActionAppwidgetUpdate })]
-[MetaData("android.appwidget.provider", Resource = "@xml/widget_4x2_info")]
-public class SnusWidget4x2 : AppWidgetProvider
+[MetaData("android.appwidget.provider", Resource = "@xml/widget_ring_info")]
+public class SnusWidgetRing : AppWidgetProvider
 {
     public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
     {
         var d = WidgetData.Read(context.GetSharedPreferences(WidgetPrefs.Name, FileCreationMode.Private)!);
+        var ring = RingBitmap.Draw(context, d.Days, d.RingProgress);
         foreach (var id in appWidgetIds)
         {
-            var v = new RemoteViews(context.PackageName, Resource.Layout.widget_4x2);
-            v.SetTextViewText(Resource.Id.w_day, d.Day);
+            var v = new RemoteViews(context.PackageName, Resource.Layout.widget_ring);
+            v.SetImageViewBitmap(Resource.Id.w_ring, ring);
             v.SetTextViewText(Resource.Id.w_money, d.Money);
             v.SetTextViewText(Resource.Id.w_avoided, d.Avoided.ToString());
-            v.SetTextViewText(Resource.Id.w_avoided_cap, d.AvoidedCap);
-            v.SetTextViewText(Resource.Id.w_wins, d.Wins.ToString());
-            v.SetTextViewText(Resource.Id.w_streak, $"🔥 {d.Streak}");
-            v.SetTextViewText(Resource.Id.w_milestone, $"🏆 {d.Milestone} free");
-            v.SetTextViewText(Resource.Id.w_daysleft, $"{d.DaysLeft} to go");
-            v.SetProgressBar(Resource.Id.w_progress, 100, d.MilestonePct, false);
+            v.SetTextViewText(Resource.Id.w_skipcap, d.SkippedCaption);
+            v.SetTextViewText(Resource.Id.w_daysleft, d.DaysLeft);
+            v.SetTextViewText(Resource.Id.w_mscap, $"until {d.Milestone} free");
+            v.SetOnClickPendingIntent(Resource.Id.w_root, WidgetIntents.Home(context, WidgetIntents.RingHome));
             appWidgetManager.UpdateAppWidget(id, v);
         }
     }
