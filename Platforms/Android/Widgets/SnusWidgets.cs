@@ -15,8 +15,9 @@ public static class WidgetPrefs
 
 /// <summary>The values a widget renders, recomputed for the current moment.</summary>
 internal readonly record struct WidgetView(
-    int Days,              // raw day count — ring centre (5b) and "Day N" message (5c)
+    int Days,              // raw day count — ring centre (5b) and hero line (5c)
     string Day,            // "12d 4h" — compact hero (5a)
+    string HoursMin,       // "4h 23m" — hours/minutes past the day count (5b centre, 5c hero)
     string Money,          // "156 kr" — amount with the user's currency symbol
     string MoneyInt,       // "156" — grouped amount, NO symbol, for the tight 5c chip
     int Streak,
@@ -31,7 +32,7 @@ internal readonly record struct WidgetView(
 /// Turns the raw plan stored in prefs into current stats. Because the widget process runs on its
 /// own (the app may be closed), it recomputes the time-derived values here against
 /// <see cref="DateTime.UtcNow"/> rather than reading a snapshot frozen at the last app launch —
-/// that is what lets the hourly refresh show live numbers.
+/// that is what lets the periodic refresh show live numbers.
 /// </summary>
 internal static class WidgetData
 {
@@ -42,7 +43,7 @@ internal static class WidgetData
         // No plan stored yet (widget added before the app was opened). Show neutral zeros.
         if (quitTicks <= 0)
             return new WidgetView(
-                Days: 0, Day: "0d 0h", Money: "0", MoneyInt: "0", Streak: 0,
+                Days: 0, Day: "0d 0h", HoursMin: "0h 0m", Money: "0", MoneyInt: "0", Streak: 0,
                 Milestone: "next milestone", MilestonePct: 0, RingProgress: 0d, DaysLeft: "",
                 Avoided: 0, SkippedCaption: "skipped");
 
@@ -65,6 +66,7 @@ internal static class WidgetData
         return new WidgetView(
             Days: s.Days,
             Day: $"{s.Days}d {s.Hours}h",
+            HoursMin: $"{s.Hours}h {s.Min}m",
             Money: StatsCalculator.FormatMoney(s.Money, profile.Currency, false),
             MoneyInt: StatsCalculator.FormatNumber(s.Money, profile.Currency),
             Streak: s.CurrentStreak,
@@ -115,7 +117,8 @@ public class SnusWidgetRing : AppWidgetProvider
         {
             var v = new RemoteViews(context.PackageName, Resource.Layout.widget_ring);
             v.SetImageViewBitmap(Resource.Id.w_ring, ring);
-            v.SetTextViewText(Resource.Id.w_ringdays, d.Days.ToString());
+            v.SetTextViewText(Resource.Id.w_ringdays, $"{d.Days}d");
+            v.SetTextViewText(Resource.Id.w_ringcap, d.HoursMin);
             v.SetTextViewText(Resource.Id.w_money, d.Money);
             v.SetTextViewText(Resource.Id.w_avoided, d.Avoided.ToString());
             v.SetTextViewText(Resource.Id.w_skipcap, d.SkippedCaption);
@@ -138,7 +141,7 @@ public class SnusWidgetSos : AppWidgetProvider
         foreach (var id in appWidgetIds)
         {
             var v = new RemoteViews(context.PackageName, Resource.Layout.widget_sos);
-            v.SetTextViewText(Resource.Id.w_msg, $"Day {d.Days} — Puff's proud of you.");
+            v.SetTextViewText(Resource.Id.w_dayhero, $"{d.Days}d {d.HoursMin}");
             v.SetTextViewText(Resource.Id.w_money2, $"💰 {d.MoneyInt}");
             v.SetTextViewText(Resource.Id.w_streak2, $"🔥 {d.Streak}d");
             v.SetProgressBar(Resource.Id.w_bar, 100, d.MilestonePct, false);
