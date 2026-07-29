@@ -16,7 +16,6 @@ public partial class GoalEditPage : ContentPage
         InitializeComponent();
         _goals = goals;
         SaveBtn.Command = new Command(async () => await SaveAsync());
-        Helpers.SafeArea.ApplyInsets(this, top: true, bottom: true);
     }
 
     public void Init(GoalItem? goal)

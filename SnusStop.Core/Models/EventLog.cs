@@ -26,4 +26,11 @@ public class EventLog
 
     public static EventLog Slip(DateTime nowUtc, Trigger trigger, string? note) =>
         new() { TimestampUtc = nowUtc, Type = EventType.Slip, Trigger = trigger, Note = note };
+
+    /// <summary>
+    /// A badge payout. <paramref name="key"/> is the <see cref="Badge.Key"/>; <paramref name="xp"/>
+    /// is 0 for the one-time baseline that marks pre-feature badges as paid without paying them.
+    /// </summary>
+    public static EventLog BadgeEarned(DateTime nowUtc, string key, int xp) =>
+        new() { TimestampUtc = nowUtc, Type = EventType.BadgeEarned, Source = key, XpDelta = xp };
 }

@@ -14,6 +14,7 @@ public static class XpService
     public const int GameDefaultXp = 10;
     public const int ChecklistXp = 20;
     public const int MilestoneXp = 50;
+    public const int BadgeXp = 100;
 
     // Cumulative XP floors → level. Chosen so level 4 spans [500,1000): 840 total XP = 340/500 in-level.
     private static readonly (int Floor, string Name)[] Table =

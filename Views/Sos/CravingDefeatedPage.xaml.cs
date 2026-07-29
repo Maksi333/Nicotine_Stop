@@ -11,7 +11,6 @@ public partial class CravingDefeatedPage : ContentPage
         InitializeComponent();
         _state = state;
         BackBtn.Command = new Command(async () => await Navigation.PopModalAsync());
-        Helpers.SafeArea.ApplyInsets(this, top: true, bottom: true);
     }
 
     /// <param name="xp">XP actually granted. 0 when the activity's daily XP was already claimed —

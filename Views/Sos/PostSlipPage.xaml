@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:Nicotine_Stop.Controls"
              x:Class="Nicotine_Stop.Views.Sos.PostSlipPage"
-             NavigationPage.HasNavigationBar="False">
+             NavigationPage.HasNavigationBar="False"
+             SafeAreaEdges="Container">
 
     <Grid Padding="22,0,22,18" RowDefinitions="*,Auto">
         <ScrollView Grid.Row="0">

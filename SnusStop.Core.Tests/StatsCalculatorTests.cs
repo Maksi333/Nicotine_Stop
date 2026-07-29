@@ -110,6 +110,20 @@ public class StatsCalculatorTests
     }
 
     [Fact]
+    public void Placeholder_profile_does_not_read_as_millennia_of_progress()
+    {
+        // A default Profile is what AppState holds before the saved one is read. Dated
+        // default(DateTime) it would compute ~740,000 nicotine-free days and flash that on screen.
+        var s = StatsCalculator.Compute(new Profile(), DateTime.UtcNow, null);
+
+        Assert.Equal(0, s.Days);
+        Assert.Equal(0, s.PouchesAvoided);
+        Assert.Equal(0, s.CurrentStreak);
+        Assert.True(s.DaysFloat < 1, $"placeholder profile reported {s.DaysFloat:N0} days");
+        Assert.True(s.Money < 0.01m, $"placeholder profile reported {s.Money:N2} saved");
+    }
+
+    [Fact]
     public void Recovery_is_monotonic_and_bounded()
     {
         var d1 = StatsCalculator.RecoveryPercent(TimeSpan.FromDays(1));

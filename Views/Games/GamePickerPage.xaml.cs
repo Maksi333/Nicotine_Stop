@@ -10,7 +10,6 @@ public partial class GamePickerPage : ContentPage
     {
         InitializeComponent();
         _services = services;
-        Helpers.SafeArea.ApplyInsets(this, top: true, bottom: true);
     }
 
     private async void OnBack(object? sender, EventArgs e) => await Navigation.PopAsync();

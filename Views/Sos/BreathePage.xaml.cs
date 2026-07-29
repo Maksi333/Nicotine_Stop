@@ -17,7 +17,6 @@ public partial class BreathePage : ContentPage
         InitializeComponent();
         _state = state;
         _services = services;
-        Helpers.SafeArea.ApplyInsets(this, top: true, bottom: true);
     }
 
     protected override void OnAppearing()

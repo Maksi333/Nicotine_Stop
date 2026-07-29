@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:Nicotine_Stop.Controls"
              x:Class="Nicotine_Stop.Views.Onboarding.OnboardingPage"
-             x:Name="Root">
+             x:Name="Root"
+             SafeAreaEdges="Container">
 
     <ContentPage.Resources>
         <controls:IntEqualConverter x:Key="IsStep" />

@@ -55,7 +55,10 @@ public partial class OnboardingViewModel : ObservableObject
     [ObservableProperty] private Currency currency = Currency.DKK;
     [ObservableProperty] private int quitModeIndex; // 0 already quit · 1 future date
     [ObservableProperty] private DateTime quitDate = DateTime.Today;
-    [ObservableProperty] private TimeSpan quitTime = new(21, 30, 0);
+    // Defaults to now (to the minute), not a fixed evening time: the screen opens on "I already
+    // quit" with today selected, so a fixed 21:30 would hand a morning user a quit moment later
+    // today and freeze every stat at zero until then.
+    [ObservableProperty] private TimeSpan quitTime = TimeSpan.FromMinutes((int)DateTime.Now.TimeOfDay.TotalMinutes);
     [ObservableProperty] private string ownReason = "";
 
     public ObservableCollection<CurrencyChipVM> CurrencyChips { get; } = new();
@@ -65,7 +68,21 @@ public partial class OnboardingViewModel : ObservableObject
     // ── Derived display ─────────────────────────────────────────
     public bool AlreadyQuit => QuitModeIndex == 0;
     public string CurrencySymbol => Currency.Symbol();
-    public DateTime QuitLocal => QuitDate.Date + QuitTime;
+    /// <summary>
+    /// The chosen quit moment in local time. "I already quit" is clamped to now: the time-of-day
+    /// defaults to 21:30, so a user who quit earlier today and onboards in the morning would
+    /// otherwise be given a quit moment in the future — leaving the home screen pinned at
+    /// 0 days / 00:00:00 / 0 saved until the evening, which reads as a broken app on day one.
+    /// </summary>
+    public DateTime QuitLocal
+    {
+        get
+        {
+            var chosen = QuitDate.Date + QuitTime;
+            var now = DateTime.Now;
+            return AlreadyQuit && chosen > now ? now : chosen;
+        }
+    }
 
     public AddictionType Addiction => AddictionIndex == 1 ? AddictionType.Cigarettes : AddictionType.Snus;
     private AddictionCopy Copy => AddictionCopy.For(Addiction);

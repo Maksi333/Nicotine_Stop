@@ -41,7 +41,6 @@ public partial class MinesweeperPage : ContentPage
         _services = services;
         BuildBoard();
         NewGame();
-        Helpers.SafeArea.ApplyInsets(this, top: true, bottom: true);
     }
 
     private void BuildBoard()

@@ -14,8 +14,12 @@ public class Profile
     /// </summary>
     public AddictionType Addiction { get; set; } = AddictionType.Snus;
 
-    /// <summary>Instant the user became (or will become) nicotine-free, in UTC.</summary>
-    public DateTime QuitUtc { get; set; }
+    /// <summary>
+    /// Instant the user became (or will become) nicotine-free, in UTC. Defaults to "now" rather
+    /// than default(DateTime): a placeholder profile is otherwise dated year 1, and every stat
+    /// derived from it reads as ~740,000 nicotine-free days. Real profiles always set this.
+    /// </summary>
+    public DateTime QuitUtc { get; set; } = DateTime.UtcNow;
 
     // Units of the chosen addiction, not necessarily pouches: cigarettes-per-day and
     // cigarettes-per-pack for a smoker. The names predate AddictionType and are kept so existing

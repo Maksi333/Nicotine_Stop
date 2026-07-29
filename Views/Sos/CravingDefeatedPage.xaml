@@ -4,7 +4,8 @@
              xmlns:controls="clr-namespace:Nicotine_Stop.Controls"
              x:Class="Nicotine_Stop.Views.Sos.CravingDefeatedPage"
              BackgroundColor="#14B36B"
-             NavigationPage.HasNavigationBar="False">
+             NavigationPage.HasNavigationBar="False"
+             SafeAreaEdges="Container">
 
     <Grid>
         <controls:ConfettiView />

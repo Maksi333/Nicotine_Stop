@@ -16,7 +16,6 @@ public partial class PostSlipPage : ContentPage
         InitializeComponent();
         _state = state;
         StartBtn.Command = new Command(async () => await Navigation.PopModalAsync());
-        Helpers.SafeArea.ApplyInsets(this, top: true, bottom: true);
     }
 
     protected override void OnAppearing()

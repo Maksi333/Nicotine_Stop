@@ -13,12 +13,15 @@ public partial class OnboardingPage : ContentPage
         _services = services;
         BindingContext = vm;
         vm.Completed += OnCompleted;
-        Helpers.SafeArea.ApplyInsets(this, top: true, bottom: true);
     }
 
-    private void OnCompleted()
+    private async void OnCompleted()
     {
-        if (Window is not null)
-            Window.Page = _services.GetRequiredService<Nicotine_Stop.Views.MainTabsPage>();
+        if (Window is null) return;
+
+        // Read the just-saved profile before building the tabs, so the home stats render with real
+        // numbers on their first frame instead of the placeholder profile.
+        await _services.GetRequiredService<Services.AppState>().EnsureLoadedAsync();
+        Window.Page = _services.GetRequiredService<Nicotine_Stop.Views.MainTabsPage>();
     }
 }

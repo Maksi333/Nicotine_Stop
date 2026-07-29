@@ -11,7 +11,6 @@ public partial class SosTakeoverPage : ContentPage
     {
         InitializeComponent();
         _services = services;
-        Helpers.SafeArea.ApplyInsets(this, top: true, bottom: true);
     }
 
     private async void OnClose(object? sender, EventArgs e) => await Navigation.PopModalAsync();

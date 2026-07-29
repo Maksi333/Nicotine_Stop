@@ -22,7 +22,6 @@ public partial class RemindWhyPage : ContentPage
         _goals = goals;
         _services = services;
         OkayBtn.Command = new Command(async () => await OkayAsync());
-        Helpers.SafeArea.ApplyInsets(this, top: true, bottom: true);
     }
 
     protected override async void OnAppearing()

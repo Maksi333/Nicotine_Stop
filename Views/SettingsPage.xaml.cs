@@ -26,7 +26,6 @@ public partial class SettingsPage : ContentPage
 
         QuitDatePicker.DateSelected += (_, _) => ApplyQuit();
         QuitTimePicker.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(TimePicker.Time)) ApplyQuit(); };
-        Helpers.SafeArea.ApplyInsets(this, top: true, bottom: true);
     }
 
     protected override void OnAppearing()

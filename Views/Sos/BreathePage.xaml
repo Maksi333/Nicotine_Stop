@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Nicotine_Stop.Views.Sos.BreathePage"
              BackgroundColor="#232140"
-             NavigationPage.HasNavigationBar="False">
+             NavigationPage.HasNavigationBar="False"
+             SafeAreaEdges="Container">
 
     <Grid Padding="22,0,22,18" RowDefinitions="Auto,*,Auto">
 

@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:Nicotine_Stop.Controls"
              x:Class="Nicotine_Stop.Views.SettingsPage"
-             NavigationPage.HasNavigationBar="False">
+             NavigationPage.HasNavigationBar="False"
+             SafeAreaEdges="Container">
 
     <ScrollView>
         <VerticalStackLayout Padding="0,0,0,24">

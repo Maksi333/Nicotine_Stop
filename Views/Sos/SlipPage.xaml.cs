@@ -21,7 +21,6 @@ public partial class SlipPage : ContentPage
         _services = services;
         LogBtn.Command = new Command(async () => await LogAsync());
         BuildChips();
-        Helpers.SafeArea.ApplyInsets(this, top: true, bottom: true);
     }
 
     protected override void OnAppearing()

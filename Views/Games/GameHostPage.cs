@@ -25,7 +25,7 @@ public abstract class GameHostPage : ContentPage
         Services = services;
         BackgroundColor = Color.FromArgb("#232140");
         NavigationPage.SetHasNavigationBar(this, false);
-        Helpers.SafeArea.ApplyInsets(this, top: true, bottom: true);
+        SafeAreaEdges = new SafeAreaEdges(SafeAreaRegions.Container);
     }
 
     protected Grid Header(string title, EventHandler<TappedEventArgs>? restart = null)
