@@ -20,6 +20,7 @@ public class AppState
 
     private const string BaselineKey = "badge_xp_baseline_v1";
     private bool _syncingBadges;
+    private bool _recordingGoals;
 
     /// <summary>Raised whenever the underlying data changes (load, new event, profile edit).</summary>
     public event EventHandler? Changed;
@@ -62,7 +63,10 @@ public class AppState
     /// </summary>
     public AddictionCopy Copy => AddictionCopy.For(Profile.Addiction);
 
-    public Stats StatsAt(DateTime nowUtc) => StatsCalculator.Compute(Profile, nowUtc, LastSlipUtc);
+    public DateTime CleanSinceUtc => StatsCalculator.CleanSinceUtc(Profile, LastSlipUtc);
+    public decimal TotalSlipSpending => Events.Where(e => e.Type == EventType.Slip).Sum(e => e.AmountSpent);
+
+    public Stats StatsAt(DateTime nowUtc) => StatsCalculator.Compute(Profile, nowUtc, LastSlipUtc, TotalSlipSpending);
     public Stats StatsNow() => StatsAt(DateTime.UtcNow);
 
     public int CravingsWon => Events.Count(e => e.Type == EventType.CravingWon);
@@ -122,6 +126,24 @@ public class AppState
             if (granted.Count > 0) BadgesEarned?.Invoke(this, granted);
         }
         finally { _syncingBadges = false; }
+    }
+
+    /// <summary>
+    /// Logs a <see cref="EventType.GoalFunded"/> entry for every goal the savings have funded that
+    /// has none yet — which is what the "Goal funded" badges count. Safe to call on every refresh:
+    /// each goal is logged once, and the re-entrancy guard covers the Changed event each write raises.
+    /// </summary>
+    public async Task RecordFundedGoalsAsync(IReadOnlyList<GoalItem> goals)
+    {
+        if (_recordingGoals || !IsLoaded) return;
+        _recordingGoals = true;
+        try
+        {
+            var funded = GoalAllocator.UnrecordedFunded(goals, StatsNow().Money, Profile.SplitSavings, Events);
+            foreach (var g in funded)
+                await AddEventAsync(EventLog.GoalFunded(DateTime.UtcNow, g.Id));
+        }
+        finally { _recordingGoals = false; }
     }
 
     public async Task SaveProfileAsync(Profile profile)

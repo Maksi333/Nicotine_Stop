@@ -1,5 +1,7 @@
+using System.Globalization;
 using Nicotine_Stop.Data;
 using SnusStop.Core.Models;
+using SnusStop.Core.Services;
 
 namespace Nicotine_Stop.Views;
 
@@ -66,7 +68,11 @@ public partial class GoalEditPage : ContentPage
             await DisplayAlert("Name needed", "Give your goal a name.", "OK");
             return;
         }
-        decimal.TryParse(PriceEntry.Text, out var price);
+        if (!GoalPrice.TryParse(PriceEntry.Text, CultureInfo.CurrentCulture, out var price))
+        {
+            await DisplayAlert("Price needed", "Enter what your goal costs — a number above 0.", "OK");
+            return;
+        }
 
         var goal = _editing ?? new GoalItem { SortOrder = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds() };
         goal.Name = name;

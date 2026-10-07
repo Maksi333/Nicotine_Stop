@@ -155,6 +155,7 @@ public class EventRepository(AppDatabase db) : IEventRepository
             Trigger = (int)e.Trigger,
             Note = e.Note,
             XpDelta = e.XpDelta,
+            AmountSpent = (double)e.AmountSpent,
         });
     }
 
@@ -191,5 +192,6 @@ public class EventRepository(AppDatabase db) : IEventRepository
         Trigger = (SnusStop.Core.Models.Trigger)r.Trigger,
         Note = r.Note,
         XpDelta = r.XpDelta,
+        AmountSpent = (decimal)(r.AmountSpent ?? 0d),
     };
 }

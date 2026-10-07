@@ -8,7 +8,7 @@
     <ScrollView>
         <VerticalStackLayout Padding="24" Spacing="18">
 
-            <Label Text="SNUSSTOP" Style="{StaticResource Overline}" TextColor="{DynamicResource PrimaryText}" />
+            <Label Text="PUFFY" Style="{StaticResource Overline}" TextColor="{DynamicResource PrimaryText}" />
             <Label Text="Control gallery" Style="{StaticResource H1}" />
 
             <controls:PuffMascot Diameter="120" Expression="Normal" Cheeks="True" Float="True"

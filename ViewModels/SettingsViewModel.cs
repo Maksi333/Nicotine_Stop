@@ -71,6 +71,6 @@ public partial class SettingsViewModel : ObservableObject
     {
         if (_suppress) return;
         await _state.SaveProfileAsync(_state.Profile);
-        await _notifications.ApplyAllAsync(_state.Profile);
+        await _notifications.ApplyAllAsync(_state.Profile, _state.LastSlipUtc);
     }
 }

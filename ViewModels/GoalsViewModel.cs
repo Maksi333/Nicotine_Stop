@@ -30,17 +30,19 @@ public partial class GoalsViewModel : ObservableObject
     private readonly IGoalRepository _goals;
     private readonly AppState _state;
     private readonly ClockService _clock;
+    private readonly WidgetUpdateService _widgets;
     private List<GoalItem> _loaded = new();
     private Stats _stats;
 
     /// <summary>Raised when the view should present the goal editor (null = new goal).</summary>
     public event Action<GoalItem?>? EditRequested;
 
-    public GoalsViewModel(IGoalRepository goals, AppState state, ClockService clock)
+    public GoalsViewModel(IGoalRepository goals, AppState state, ClockService clock, WidgetUpdateService widgets)
     {
         _goals = goals;
         _state = state;
         _clock = clock;
+        _widgets = widgets;
         _stats = _state.StatsAt(_clock.NowUtc);
 
         // Savings accrue every second. Without this the page froze at its load-time figure and
@@ -82,47 +84,14 @@ public partial class GoalsViewModel : ObservableObject
         _loaded = await _goals.AllAsync();
         SplitSavings = _state.Profile.SplitSavings;
         Rebuild();
+
+        // Runs at startup and after every goal edit; goal edits don't pass through AppState, so
+        // this is the only point the goal widget learns about them.
+        _widgets.UpdateGoals(_loaded);
     }
 
-    private sealed record Alloc(GoalItem Goal, decimal Amount, bool Funded, bool IsActive);
-
-    /// <summary>
-    /// Splits the savings across goals. Off = top-down (fill the first goal, spill into the next);
-    /// on = an equal share each.
-    /// </summary>
-    private List<Alloc> Allocate(decimal money)
-    {
-        var ordered = _loaded.OrderBy(g => g.SortOrder).ToList();
-        var result = new List<Alloc>(ordered.Count);
-        decimal remaining = money;
-        bool firstActiveTaken = false;
-
-        foreach (var g in ordered)
-        {
-            decimal amount;
-            if (SplitSavings)
-            {
-                amount = Math.Min(g.Price, money / Math.Max(1, ordered.Count));
-            }
-            else
-            {
-                amount = Math.Min(g.Price, Math.Max(0, remaining));
-                remaining -= amount;
-            }
-
-            bool funded = amount >= g.Price && g.Price > 0;
-            bool isActive = false;
-            if (!funded)
-            {
-                isActive = SplitSavings || !firstActiveTaken;
-                if (!SplitSavings) firstActiveTaken = true;
-            }
-
-            result.Add(new Alloc(g, amount, funded, isActive));
-        }
-
-        return result;
-    }
+    private IReadOnlyList<GoalAllocation> Allocate(decimal money) =>
+        GoalAllocator.Allocate(_loaded, money, SplitSavings);
 
     /// <summary>Full rebuild of both collections. Needed when the goals themselves change.</summary>
     private void Rebuild()
@@ -168,6 +137,16 @@ public partial class GoalsViewModel : ObservableObject
         IsEmpty = _loaded.Count == 0;
         RaiseMoney();
         OnPropertyChanged(nameof(HasTrophies));
+
+        RecordFundedGoals();
+    }
+
+    // Fire-and-forget, like the badge sync: a failed write is retried on the next rebuild. Every
+    // newly funded goal passes through Rebuild (Refresh hands over when the funded set changes).
+    private async void RecordFundedGoals()
+    {
+        try { await _state.RecordFundedGoalsAsync(_loaded); }
+        catch { /* retried on the next rebuild */ }
     }
 
     /// <summary>
@@ -197,7 +176,7 @@ public partial class GoalsViewModel : ObservableObject
         RaiseMoney();
     }
 
-    private static void Apply(GoalCardVM card, Alloc a, Currency cur)
+    private static void Apply(GoalCardVM card, GoalAllocation a, Currency cur)
     {
         double frac = a.Goal.Price > 0 ? Math.Clamp((double)(a.Amount / a.Goal.Price), 0, 1) : 0;
         card.ProgressFraction = frac;

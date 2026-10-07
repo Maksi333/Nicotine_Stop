@@ -21,6 +21,21 @@ public partial class MinesweeperPage : ContentPage
     /// <summary>How long after a hold a tap on that same cell is treated as the hold's own release.</summary>
     private static readonly TimeSpan TapAfterHoldWindow = TimeSpan.FromMilliseconds(600);
 
+    /// <summary>
+    /// Widest the page column may get. Every phone is narrower than this, so phones keep the
+    /// full-width layout untouched; on a tablet the rows centre instead of stretching edge to edge.
+    /// </summary>
+    private const double MaxContentWidth = 520;
+
+    /// <summary>
+    /// Widest the square board may get. A landscape tablet would otherwise hand it ~600dp and make
+    /// every cell more than twice its size on a phone.
+    /// </summary>
+    private const double MaxBoardSide = 460;
+
+    /// <summary>The board frame's Padding="10", counted on both sides.</summary>
+    private const double BoardFramePadding = 20;
+
     private readonly AppState _state;
     private readonly IServiceProvider _services;
     private readonly Border[,] _cells = new Border[Size, Size];
@@ -39,6 +54,14 @@ public partial class MinesweeperPage : ContentPage
         InitializeComponent();
         _state = state;
         _services = services;
+
+        // Root is centred, so it needs an explicit width: on a phone that resolves to the full page
+        // width (unchanged layout), on a tablet to a centred column.
+        SizeChanged += (_, _) =>
+        {
+            if (Width > 0) Root.WidthRequest = Math.Min(Width, MaxContentWidth);
+        };
+
         BuildBoard();
         NewGame();
     }
@@ -50,11 +73,10 @@ public partial class MinesweeperPage : ContentPage
             Board.RowDefinitions.Add(new RowDefinition(GridLength.Star));
             Board.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
         }
-        Board.SizeChanged += (_, _) =>
-        {
-            if (Board.Width > 0 && Math.Abs(Board.HeightRequest - Board.Width) > 1)
-                Board.HeightRequest = Board.Width;
-        };
+        // The board is square and has to fit the space left over after the header, stat cards,
+        // buttons and status line have taken theirs. Sizing it off width alone overflowed the row
+        // on anything wider than it is tall — a landscape tablet drove the square to full width.
+        BoardArea.SizeChanged += (_, _) => ResizeBoard();
 
         for (int r = 0; r < Size; r++)
             for (int c = 0; c < Size; c++)
@@ -78,6 +100,23 @@ public partial class MinesweeperPage : ContentPage
                 _labels[r, c] = lbl;
                 Board.Add(cell, c, r);
             }
+    }
+
+    /// <summary>
+    /// Sizes the board to the largest square that fits its row, capped so tablet cells stay in the
+    /// same ballpark as phone cells. On a phone the row is taller than it is wide, so the width wins
+    /// and the result matches the old width-only sizing exactly.
+    /// </summary>
+    private void ResizeBoard()
+    {
+        if (BoardArea.Width <= 0 || BoardArea.Height <= 0) return;
+
+        double side = Math.Min(BoardArea.Width, BoardArea.Height) - BoardFramePadding;
+        side = Math.Min(side, MaxBoardSide);
+        if (side <= 0 || Math.Abs(Board.WidthRequest - side) <= 1) return;
+
+        Board.WidthRequest = side;
+        Board.HeightRequest = side;
     }
 
     private void NewGame()

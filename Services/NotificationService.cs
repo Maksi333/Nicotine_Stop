@@ -1,6 +1,7 @@
 using Plugin.LocalNotification;
 using Plugin.LocalNotification.Core.Models;
 using SnusStop.Core.Models;
+using SnusStop.Core.Services;
 
 namespace Nicotine_Stop.Services;
 
@@ -25,12 +26,12 @@ public class NotificationService
         }
     }
 
-    public async Task ApplyAllAsync(Profile p)
+    public async Task ApplyAllAsync(Profile p, DateTime? lastSlipUtc = null)
     {
         await EnsurePermissionAsync();
         ScheduleDaily(p.NotifyDaily, string.IsNullOrWhiteSpace(p.Name) ? "there" : p.Name);
         ScheduleWeekly(p.NotifyWeekly);
-        ScheduleMilestones(p, p.NotifyMilestone);
+        ScheduleMilestones(p, p.NotifyMilestone, lastSlipUtc);
     }
 
     public void ScheduleDaily(bool on, string name)
@@ -59,14 +60,14 @@ public class NotificationService
         });
     }
 
-    public void ScheduleMilestones(Profile p, bool on)
+    public void ScheduleMilestones(Profile p, bool on, DateTime? lastSlipUtc = null)
     {
         for (int i = 0; i < Milestones.Progress.Count; i++)
             LocalNotificationCenter.Current.Cancel(MilestoneBase + i);
         if (!on) return;
 
         var now = DateTime.Now;
-        var quitLocal = p.QuitUtc.ToLocalTime();
+        var quitLocal = StatsCalculator.CleanSinceUtc(p, lastSlipUtc).ToLocalTime();
         for (int i = 0; i < Milestones.Progress.Count; i++)
         {
             var m = Milestones.Progress[i];

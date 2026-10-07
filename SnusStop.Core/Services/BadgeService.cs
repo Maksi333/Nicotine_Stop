@@ -15,11 +15,14 @@ public static class BadgeService
         bool anyBreathe = ev.Any(e => e.Type == EventType.CravingWon && e.Source == "breathe");
         bool anyGame = ev.Any(e => e.Type == EventType.CravingWon && e.Source == "game");
         int level = XpService.ForXp(totalXp).Number;
+        var recorded = ev.Where(e => e.Type == EventType.BadgeEarned && e.Source is not null)
+            .Select(e => e.Source!).ToHashSet();
 
         var earned = new List<Badge>();
         void Add(string key, bool cond)
         {
-            if (cond) earned.Add(Badges.ByKey(key, p.Addiction, p.Currency));
+            // A slip can reset time or lower savings, but already-awarded badges stay earned.
+            if (cond || recorded.Contains(key)) earned.Add(Badges.ByKey(key, p.Addiction, p.Currency));
         }
 
         Add("day1", s.Days >= 1);

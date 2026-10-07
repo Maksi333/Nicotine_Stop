@@ -14,6 +14,8 @@ internal static class WidgetIntents
     public const int RingHome = 20;
     public const int SosHome = 30;
     public const int SosButton = 31;
+    public const int GoalHome = 40;
+    public const int GoalSos = 41;
 
     /// <summary>Opens the app on its normal Home screen.</summary>
     public static PendingIntent Home(Context context, int requestCode)

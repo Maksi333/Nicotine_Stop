@@ -12,7 +12,7 @@ public static class CsvExporter
         var inv = CultureInfo.InvariantCulture;
         var sb = new StringBuilder();
 
-        sb.AppendLine("SnusStop export");
+        sb.AppendLine("Puffy export");
         sb.AppendLine();
 
         sb.AppendLine("PROFILE");
@@ -30,10 +30,10 @@ public static class CsvExporter
         sb.AppendLine();
 
         sb.AppendLine("EVENTS");
-        sb.AppendLine("TimestampUtc,Type,Source,Trigger,XpDelta,Note");
+        sb.AppendLine("TimestampUtc,Type,Source,Trigger,XpDelta,Note,AmountSpent");
         foreach (var e in events)
             sb.AppendLine(string.Join(",",
-                Q(e.TimestampUtc.ToString("o", inv)), e.Type, Q(e.Source ?? ""), e.Trigger, e.XpDelta, Q(e.Note ?? "")));
+                Q(e.TimestampUtc.ToString("o", inv)), e.Type, Q(e.Source ?? ""), e.Trigger, e.XpDelta, Q(e.Note ?? ""), e.AmountSpent.ToString(inv)));
 
         return sb.ToString();
     }

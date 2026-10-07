@@ -16,8 +16,8 @@ public record Stats(
     double RecoveryPercent);
 
 /// <summary>
-/// Pure derivations from the profile + last-slip time. Nothing here is persisted.
-/// Formulas mirror the design's logic block (spec §5).
+/// Clean time starts at the latest slip; lifetime savings accrue from the original quit date,
+/// less recorded slip spending. Nothing here is persisted.
 /// </summary>
 public static class StatsCalculator
 {
@@ -38,9 +38,12 @@ public static class StatsCalculator
     public static int CansPerWeek(Profile p) =>
         p.PouchesPerCan <= 0 ? 0 : (int)Math.Round(p.PouchesPerDay * 7.0 / p.PouchesPerCan);
 
-    public static Stats Compute(Profile p, DateTime nowUtc, DateTime? lastSlipUtc)
+    public static DateTime CleanSinceUtc(Profile p, DateTime? lastSlipUtc) =>
+        lastSlipUtc is DateTime slip && slip > p.QuitUtc ? slip : p.QuitUtc;
+
+    public static Stats Compute(Profile p, DateTime nowUtc, DateTime? lastSlipUtc, decimal totalSlipSpending = 0m)
     {
-        var elapsed = nowUtc - p.QuitUtc;
+        var elapsed = nowUtc - CleanSinceUtc(p, lastSlipUtc);
         double totalSeconds = Math.Max(0, elapsed.TotalSeconds);
         double daysFloat = totalSeconds / 86400.0;
 
@@ -49,14 +52,10 @@ public static class StatsCalculator
         int min = (int)(totalSeconds % 3600 / 60);
         int sec = (int)(totalSeconds % 60);
 
-        decimal money = (decimal)daysFloat * p.PouchesPerDay * PerPouch(p);
-        int pouchesAvoided = (int)Math.Floor(daysFloat * p.PouchesPerDay);
-
-        int currentStreak;
-        if (lastSlipUtc is DateTime slip && slip > p.QuitUtc)
-            currentStreak = Math.Max(0, (int)((nowUtc - slip).TotalDays));
-        else
-            currentStreak = days;
+        double lifetimeDays = Math.Max(0, (nowUtc - p.QuitUtc).TotalDays);
+        decimal money = (decimal)lifetimeDays * PerDayCost(p) - totalSlipSpending;
+        int pouchesAvoided = (int)Math.Floor(lifetimeDays * p.PouchesPerDay);
+        int currentStreak = days;
 
         Milestone? next = null;
         foreach (var m in Milestones.Progress)

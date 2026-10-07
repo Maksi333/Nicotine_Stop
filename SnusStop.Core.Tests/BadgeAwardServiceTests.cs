@@ -86,4 +86,19 @@ public class BadgeAwardServiceTests
         Assert.Contains("week1", BadgeService.Earned(p, log, s).Select(b => b.Key));
         Assert.DoesNotContain("week1", BadgeAwardService.Pending(p, log, s).Select(b => b.Key));
     }
+
+    [Fact]
+    public void Slip_preserves_recorded_badges_without_unlocking_unearned_time_badges()
+    {
+        var p = Quit(30);
+        var log = new List<EventLog> { Paid("week1"), Paid("save500"), EventLog.Slip(Now, Trigger.None, null, 900m) };
+        var stats = StatsCalculator.Compute(p, Now, Now, 900m);
+        var (earned, locked) = BadgeService.Split(p, log, stats);
+
+        Assert.Contains(earned, b => b.Key == "week1");
+        Assert.Contains(earned, b => b.Key == "save500");
+        Assert.Contains(locked, b => b.Key == "month1");
+        Assert.Equal(200, log.Sum(e => e.XpDelta));
+        Assert.DoesNotContain(BadgeAwardService.Pending(p, log, stats), b => b.Key == "week1" || b.Key == "save500");
+    }
 }

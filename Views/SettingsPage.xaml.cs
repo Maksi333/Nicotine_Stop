@@ -119,7 +119,7 @@ public partial class SettingsPage : ContentPage
     private async Task SaveAsync()
     {
         await _state.SaveProfileAsync(_state.Profile);
-        await _notifications.ApplyAllAsync(_state.Profile);
+        await _notifications.ApplyAllAsync(_state.Profile, _state.LastSlipUtc);
         _vm.Refresh();
     }
 }

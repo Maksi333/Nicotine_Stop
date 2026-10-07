@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text.Json;
 using Android.Appwidget;
 using Android.Content;
 using Nicotine_Stop.Platforms.Android.Widgets;
@@ -13,7 +14,7 @@ namespace Nicotine_Stop.Services;
 /// </summary>
 public class WidgetUpdateService
 {
-    public void Update(Profile profile, DateTime? lastSlipUtc, int cravingsWon)
+    public void Update(Profile profile, DateTime? lastSlipUtc, int cravingsWon, decimal totalSlipSpending)
     {
         var ctx = global::Android.App.Application.Context;
         if (ctx is null) return;
@@ -31,16 +32,43 @@ public class WidgetUpdateService
         editor.PutInt("cur", (int)profile.Currency);
         editor.PutInt("addiction", (int)profile.Addiction);
         editor.PutLong("slipTicks", lastSlipUtc?.Ticks ?? 0L);
+        editor.PutString("slipSpending", totalSlipSpending.ToString(CultureInfo.InvariantCulture));
+        editor.PutBoolean("split", profile.SplitSavings);
 
         // Cravings won comes from the events log, which the widget can't read, so it stays a
         // stored count rather than something recomputed.
         editor.PutInt("wins", cravingsWon);
 
         editor.Apply();
+        TriggerAll(ctx);
+    }
 
+    /// <summary>
+    /// Stores the goals the goal widget allocates savings across. Only what allocation needs —
+    /// never the photo path. Which goal is active, and how far along it is, is computed by the
+    /// widget at display time from the live savings total, like everything else.
+    /// </summary>
+    public void UpdateGoals(IEnumerable<GoalItem> goals)
+    {
+        var ctx = global::Android.App.Application.Context;
+        var editor = ctx?.GetSharedPreferences(WidgetPrefs.Name, FileCreationMode.Private)?.Edit();
+        if (ctx is null || editor is null) return;
+
+        var slim = goals
+            .Select(g => new GoalItem { Id = g.Id, Name = g.Name, Price = g.Price, SortOrder = g.SortOrder })
+            .ToList();
+        editor.PutString("goals", JsonSerializer.Serialize(slim, WidgetJson.Default.ListGoalItem));
+        editor.Apply();
+
+        Trigger(ctx, typeof(SnusWidgetGoal));
+    }
+
+    private static void TriggerAll(Context ctx)
+    {
         Trigger(ctx, typeof(SnusWidgetCompact));
         Trigger(ctx, typeof(SnusWidgetRing));
         Trigger(ctx, typeof(SnusWidgetSos));
+        Trigger(ctx, typeof(SnusWidgetGoal));
     }
 
     private static void Trigger(Context ctx, Type providerType)

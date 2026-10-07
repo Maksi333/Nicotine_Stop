@@ -9,7 +9,7 @@ namespace SnusStop.Core.Services;
 /// Anything earned without a matching entry is pending.
 ///
 /// Because the log is the record, a badge cannot pay twice: not when the app re-syncs, and not when
-/// a slip revokes a day badge the user then earns back. XP granted is never taken away either.
+/// the user reaches a day or savings threshold again after a slip. Earned badges and XP stay earned.
 /// </summary>
 public static class BadgeAwardService
 {

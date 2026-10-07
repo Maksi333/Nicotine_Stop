@@ -1,7 +1,7 @@
 # Handoff: SnusStop — Quit Snus App (Android)
 
 ## Overview
-SnusStop is a gamified quit-snus/nicotine-pouch app for Android (.NET MAUI target). It tracks time since quitting, money saved, and pouches avoided; funds user-defined goals with the savings; shows a health-recovery timeline; awards XP/levels/badges; and provides an always-reachable "Craving SOS" takeover with breathing, distraction games (incl. Minesweeper), and motivation reminders. Slips are logged without shame and only reset the current streak — never money, badges, or total clean days.
+SnusStop is a gamified quit-snus/nicotine-pouch app for Android (.NET MAUI target). It tracks time since quitting, money saved, and pouches avoided; funds user-defined goals with the savings; shows a health-recovery timeline; awards XP/levels/badges; and provides an always-reachable "Craving SOS" takeover with breathing, distraction games (incl. Minesweeper), and motivation reminders. Slips are logged without shame, restart the clean-day counter and streak, and deduct any entered spending from savings. Earned badges and XP are kept.
 
 ## About the Design Files
 The files in this bundle are **design references created in HTML** — prototypes showing intended look and behavior, not production code to copy directly. The task is to **recreate these designs in the target codebase's environment** (.NET MAUI, or whatever framework the team chooses if none exists yet) using its established patterns and libraries.
@@ -40,7 +40,7 @@ Bottom nav: white bar, 1.5px #E9EFEA top border; tabs Home 🏠, Goals 🎯, Hea
 - **1r Breathe** — 4-7-8 exercise: three concentric lavender circles scaling with a 19s keyframe cycle (in 4s → hold 7s → out 8s), phase label + count, cycle dots "1 of 4", exit button.
 - **1s Remind me why** — deep green bg #0E3B2A; user's own written reasons as quote cards; white goal card showing nearest goal + "One can skipped = 45 kr closer. This craving is worth money."
 - **1t Craving defeated** — full green celebration, confetti, happy-eyes Puff, "That's the 23rd craving you've beaten", +15 XP and total-wins chips, white CTA.
-- **1u I slipped** — light, judgment-free. "Slips happen." Two-column keep/reset cards (KEEP: total clean days, money, badges/XP — green; RESETS: current streak only — coral). Optional trigger chips (Party/Stress/Coffee/After a meal/Boredom/Friends using; selected = dark ink pill), note field, dark CTA "Log it & keep going", escape link "Never mind".
+- **1u I slipped** — light, judgment-free. "Slips happen." Two-column keep/reset cards (KEEP: net savings after spending, badges/XP — green; RESETS: clean-day counter and streak — coral). Optional amount spent in the selected currency (blank = zero, comma or dot decimals), with a savings preview. Optional trigger chips (Party/Stress/Coffee/After a meal/Boredom/Friends using; selected = dark ink pill), note field, dark CTA "Log it & keep going", escape link "Never mind".
 - **1v Post-slip** — "Day 1 of your next streak.", stats retained, trigger-pattern bars (count per trigger, worst = coral), actionable tip banner, CTA "Start day 1 💪".
 
 ### Widgets & system surfaces
@@ -49,9 +49,9 @@ Bottom nav: white bar, 1.5px #E9EFEA top border; tabs Home 🏠, Goals 🎯, Hea
 - **1y Notifications** — milestone unlocked (CLAIM BADGE / LATER actions), morning check-in nudge, weekly summary. Tone: warm, concrete numbers, never guilt.
 
 ## Interactions & Behavior
-- **Live counters**: day/hh:mm:ss ticker (1 s interval), money saved = elapsed_days × pouches/day × (can_price ÷ pouches_per_can), pouches avoided = floor(elapsed_days × pouches/day). Shown on Home, Goals pill, widgets, SOS "Remind me why".
+- **Live counters**: day/hh:mm:ss ticker (1 s interval) starts from the latest slip or the original quit date, whichever is later. Money saved = days_since_original_quit × pouches/day × (can_price ÷ pouches_per_can) − total_slip_spending; negative balances are allowed. Pouches avoided = floor(days_since_original_quit × pouches/day). Shown on Home, Goals pill, widgets, SOS "Remind me why".
 - **SOS is global**: docked center nav button, opens full-screen takeover; every SOS sub-screen has an "I'm okay / craving passed" exit that logs a craving-won event (+XP, celebration 1t).
-- **Slip flow**: streak → 0 and restarts immediately; total clean days, money, XP, badges untouched. Trigger chips optional. Post-slip screen surfaces trigger patterns + one concrete tip.
+- **Slip flow**: clean days, ticker, and streak → 0 and restart immediately; time-based progress and health timeline restart too. Savings continue accruing from the original quit date, less cumulative spending recorded on slips. Existing slips have zero spending. XP and earned badges stay intact. Milestone notifications and widgets follow the restarted timer. Trigger chips optional. Post-slip screen shows net savings, trigger patterns, and one concrete tip.
 - **Future quit date** (onboarding 1e): countdown state with get-ready checklist (+20 XP each) until day one. (Frame removed from canvas by request; behavior remains in spec.)
 - **XP**: daily check-in +10, craving beaten +15, games +10–15, checklist +20, milestones +50. Levels have names ("Fresh Air" = level 4).
 - **Animations**: mascot float 3.2s ease-in-out loop; SOS pulse 2.4s box-shadow ring; breathe 19s cycle; new-badge shimmer 1.6s. Button presses should depress the 0 4px 0 bottom-shadow (translate down 2–4px).
@@ -60,7 +60,7 @@ Bottom nav: white bar, 1.5px #E9EFEA top border; tabs Home 🏠, Goals 🎯, Hea
 ## State Management
 - Profile: name, quit datetime, pouches/day, pouches/can, can price, currency (DKK/SEK/NOK/EUR), motivations (list, incl. free text).
 - Derived (never stored): elapsed time, money saved, pouches avoided, milestone progress.
-- Events log: check-ins, cravings won (with source: breathe/game/reasons), slips (timestamp, trigger, note), badges earned, XP total, current + best streak, total clean days.
+- Events log: check-ins, cravings won (with source: breathe/game/reasons), slips (timestamp, trigger, note, amount spent), badges earned, XP total, current + best streak, clean days. CSV exports include `AmountSpent` on each event.
 - Goals: name, price, photo, order, funded flag; savings allocate top-down when "split" toggle off.
 - All data local-first; CSV export.
 

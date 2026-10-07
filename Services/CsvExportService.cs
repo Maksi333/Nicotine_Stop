@@ -23,12 +23,12 @@ public class CsvExportService
         var events = await _events.AllAsync();
         var csv = CsvExporter.Build(_state.Profile, goals, events);
 
-        var path = Path.Combine(FileSystem.CacheDirectory, "snusstop-export.csv");
+        var path = Path.Combine(FileSystem.CacheDirectory, "puffy-export.csv");
         await File.WriteAllTextAsync(path, csv);
 
         await Share.Default.RequestAsync(new ShareFileRequest
         {
-            Title = "SnusStop data export",
+            Title = "Puffy data export",
             File = new ShareFile(path),
         });
     }

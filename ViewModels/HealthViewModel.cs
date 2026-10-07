@@ -47,7 +47,7 @@ public partial class HealthViewModel : ObservableObject
 
     private void Build()
     {
-        var elapsed = _clock.NowUtc - _state.Profile.QuitUtc;
+        var elapsed = _clock.NowUtc - _state.CleanSinceUtc;
         if (elapsed < TimeSpan.Zero) elapsed = TimeSpan.Zero;
         Recovery = StatsCalculator.RecoveryPercent(elapsed);
 

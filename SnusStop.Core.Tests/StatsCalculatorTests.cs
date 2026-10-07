@@ -48,6 +48,97 @@ public class StatsCalculatorTests
         var slip = now.AddDays(-3);
         var s = StatsCalculator.Compute(p, now, slip);
         Assert.Equal(3, s.CurrentStreak);
+        Assert.Equal(3, s.Days);
+    }
+
+    [Fact]
+    public void Slip_restarts_clean_timer_and_milestones_but_only_deducts_actual_spending()
+    {
+        var p = P();
+        var now = p.QuitUtc.AddDays(10);
+        var before = StatsCalculator.Compute(p, now, null);
+        var after = StatsCalculator.Compute(p, now, now, 45.50m);
+
+        Assert.Equal(0, after.Days);
+        Assert.Equal(0, after.Hours);
+        Assert.Equal(0, after.Min);
+        Assert.Equal(0, after.Sec);
+        Assert.Equal(0, after.DaysFloat);
+        Assert.Equal(0, after.CurrentStreak);
+        Assert.Equal(0, after.RingProgress);
+        Assert.Equal(0, after.RecoveryPercent);
+        Assert.Equal(Milestones.Progress[0], after.Next);
+        Assert.Equal(before.Money - 45.50m, after.Money);
+        Assert.Equal(before.PouchesAvoided, after.PouchesAvoided);
+        Assert.Equal(new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc), p.QuitUtc);
+    }
+
+    [Fact]
+    public void Clean_timer_and_savings_continue_growing_after_a_slip()
+    {
+        var p = P();
+        var slip = p.QuitUtc.AddDays(10);
+        var now = slip.AddDays(2).AddHours(3).AddMinutes(4).AddSeconds(5);
+        var after = StatsCalculator.Compute(p, now, slip, 45m);
+        var withoutSlip = StatsCalculator.Compute(p, now, null);
+
+        Assert.Equal(2, after.Days);
+        Assert.Equal(3, after.Hours);
+        Assert.Equal(4, after.Min);
+        Assert.Equal(5, after.Sec);
+        Assert.Equal(withoutSlip.Money - 45m, after.Money);
+        Assert.Equal(StatsCalculator.RecoveryPercent(now - slip), after.RecoveryPercent);
+    }
+
+    [Fact]
+    public void Repeated_slips_deduct_cumulative_spending_and_use_the_latest_restart()
+    {
+        var p = P();
+        var slips = new[]
+        {
+            EventLog.Slip(p.QuitUtc.AddDays(3), Trigger.Stress, null, 45.50m),
+            EventLog.Slip(p.QuitUtc.AddDays(7), Trigger.Coffee, "Bought a pack", 60.25m),
+        };
+        var now = p.QuitUtc.AddDays(10);
+        var after = StatsCalculator.Compute(p, now, slips.Max(e => e.TimestampUtc), slips.Sum(e => e.AmountSpent));
+
+        Assert.Equal(3, after.Days);
+        Assert.Equal(231.75m, after.Money);
+    }
+
+    [Fact]
+    public void Slip_without_spending_preserves_savings_and_restarts_clean_days()
+    {
+        var p = P();
+        var now = p.QuitUtc.AddDays(10);
+        var slip = EventLog.Slip(now, Trigger.None, null);
+        var after = StatsCalculator.Compute(p, now, slip.TimestampUtc, slip.AmountSpent);
+
+        Assert.Equal(0m, slip.AmountSpent);
+        Assert.Equal(0, after.Days);
+        Assert.Equal(337.5m, after.Money);
+    }
+
+    [Fact]
+    public void Spending_beyond_savings_is_fully_deducted_and_can_be_recovered_over_time()
+    {
+        var p = P();
+        var slip = p.QuitUtc.AddDays(1);
+        Assert.Equal(-66.25m, StatsCalculator.Compute(p, slip, slip, 100m).Money);
+        Assert.Equal(1.25m, StatsCalculator.Compute(p, p.QuitUtc.AddDays(3), slip, 100m).Money);
+    }
+
+    [Fact]
+    public void Slip_before_the_quit_date_does_not_start_the_clean_timer_early()
+    {
+        var p = P();
+        var beforeQuit = p.QuitUtc.AddDays(-1);
+        var s = StatsCalculator.Compute(p, beforeQuit, beforeQuit, 45m);
+        Assert.Equal(0, s.Days);
+        Assert.Equal(0, s.CurrentStreak);
+        Assert.Equal(0, s.RingProgress);
+        Assert.Equal(-45m, s.Money);
+        Assert.Equal(p.QuitUtc, StatsCalculator.CleanSinceUtc(p, beforeQuit));
     }
 
     [Fact]

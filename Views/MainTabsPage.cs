@@ -42,7 +42,7 @@ public class MainTabsPage : ContentPage
         _services = services;
         _notifications = notifications;
         _widgets = widgets;
-        _state.Changed += (_, _) => _widgets.Update(_state.Profile, _state.LastSlipUtc, _state.CravingsWon);
+        _state.Changed += (_, _) => _widgets.Update(_state.Profile, _state.LastSlipUtc, _state.CravingsWon, _state.TotalSlipSpending);
         BindingContext = shell;
 
         _tabs = new View[] { home, goals, health, journey };
@@ -116,8 +116,8 @@ public class MainTabsPage : ContentPage
                 await OpenSosAsync();
 
             await _goalsVm.LoadAsync();
-            await _notifications.ApplyAllAsync(_state.Profile);
-            _widgets.Update(_state.Profile, _state.LastSlipUtc, _state.CravingsWon);
+            await _notifications.ApplyAllAsync(_state.Profile, _state.LastSlipUtc);
+            _widgets.Update(_state.Profile, _state.LastSlipUtc, _state.CravingsWon, _state.TotalSlipSpending);
 
             // Only now may banners show. Onboarding hands over a freshly saved profile, so the very
             // first badge payout is already queued by the time this method starts — and the line

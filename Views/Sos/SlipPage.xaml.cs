@@ -12,13 +12,15 @@ public partial class SlipPage : ContentPage
     private readonly AppState _state;
     private readonly IServiceProvider _services;
     private Trigger _selected = Trigger.None;
+    private bool _saving;
+    private bool _logged;
     private readonly List<(Border Border, Label Label, Trigger Trigger)> _chips = new();
 
     public SlipPage(AppState state, IServiceProvider services)
     {
-        InitializeComponent();
         _state = state;
         _services = services;
+        InitializeComponent();
         LogBtn.Command = new Command(async () => await LogAsync());
         BuildChips();
     }
@@ -26,10 +28,23 @@ public partial class SlipPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
+        AmountLabel.Text = $"AMOUNT SPENT ({_state.Profile.Currency.Code()}) · OPTIONAL";
+        RefreshSummary();
+    }
+
+    private void OnAmountChanged(object? sender, TextChangedEventArgs e)
+    {
+        AmountError.IsVisible = false;
+        RefreshSummary();
+    }
+
+    private void RefreshSummary()
+    {
         var s = _state.StatsNow();
-        string money = StatsCalculator.FormatMoney(s.Money, _state.Profile.Currency, false);
-        KeepLabel.Text = $"{s.Days} total clean days\n{money} saved\nAll badges & XP";
-        ResetLabel.Text = $"Current streak\n({s.CurrentStreak} days → 0, and day 1 starts now)";
+        bool valid = SlipAmount.TryParse(AmountEntry.Text, out var amount);
+        string money = StatsCalculator.FormatMoney(s.Money - (_logged || !valid ? 0m : amount), _state.Profile.Currency, true);
+        KeepLabel.Text = $"{money} net savings\nAll badges & XP";
+        ResetLabel.Text = $"Clean-day counter & streak\n({s.Days} days → 0)\nYour next day 1 starts now";
     }
 
     private void BuildChips()
@@ -86,12 +101,49 @@ public partial class SlipPage : ContentPage
         }
     }
 
-    private async void OnBack(object? sender, EventArgs e) => await Navigation.PopAsync();
+    private async void OnBack(object? sender, EventArgs e)
+    {
+        if (!_saving) await Navigation.PopAsync();
+    }
 
     private async Task LogAsync()
     {
-        await _state.AddEventAsync(EventLog.Slip(DateTime.UtcNow, _selected, NoteEditor.Text));
-        var post = _services.GetRequiredService<PostSlipPage>();
-        await Navigation.PushAsync(post);
+        if (_saving) return;
+        if (!SlipAmount.TryParse(AmountEntry.Text, out var amount))
+        {
+            AmountError.IsVisible = true;
+            AmountEntry.Focus();
+            return;
+        }
+
+        _saving = true;
+        LogBtn.IsEnabled = false;
+        try
+        {
+            if (!_logged)
+            {
+                // Preserve any newly-earned badges before resetting time and reducing savings.
+                await _state.SyncBadgesAsync();
+                await _state.AddEventAsync(EventLog.Slip(DateTime.UtcNow, _selected, NoteEditor.Text, amount));
+                _logged = true;
+                AmountEntry.IsReadOnly = true;
+                LogBtn.Text = "Continue";
+                _services.GetRequiredService<NotificationService>()
+                    .ScheduleMilestones(_state.Profile, _state.Profile.NotifyMilestone, _state.LastSlipUtc);
+            }
+            var post = _services.GetRequiredService<PostSlipPage>();
+            await Navigation.PushAsync(post);
+        }
+        catch
+        {
+            await DisplayAlertAsync("Couldn't finish", _logged
+                ? "Your slip was saved. Tap Continue to carry on."
+                : "Your slip couldn't be saved. Please try again.", "OK");
+        }
+        finally
+        {
+            _saving = false;
+            LogBtn.IsEnabled = true;
+        }
     }
 }

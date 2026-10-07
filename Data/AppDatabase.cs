@@ -50,6 +50,8 @@ public class EventRow
     public int Trigger { get; set; }
     public string? Note { get; set; }
     public int XpDelta { get; set; }
+    // Nullable so existing rows remain readable after sqlite-net adds this column.
+    public double? AmountSpent { get; set; }
 }
 
 /// <summary>Owns the on-device SQLite connection and lazy table creation.</summary>

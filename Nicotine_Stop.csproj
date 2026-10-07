@@ -22,10 +22,10 @@
 		<MauiXamlInflator>SourceGen</MauiXamlInflator>
 
 		<!-- Display name -->
-		<ApplicationTitle>SnusStop</ApplicationTitle>
+		<ApplicationTitle>Puffy</ApplicationTitle>
 
-		<!-- App Identifier -->
-		<ApplicationId>dk.snusstop.app</ApplicationId>
+		<!-- App Identifier — must match the package name reserved in Play Console; permanent once published. -->
+		<ApplicationId>dk.puffy.app</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>

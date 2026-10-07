@@ -31,11 +31,26 @@
                 <Border Grid.Column="1" StrokeThickness="2" Stroke="#FFD1CC" BackgroundColor="{DynamicResource CoralTint}"
                         StrokeShape="RoundRectangle 18" Padding="14,13">
                     <VerticalStackLayout Spacing="6">
-                        <Label Text="↺ ONLY THIS RESETS" FontFamily="NunitoBlack" FontSize="11" CharacterSpacing="1" TextColor="{DynamicResource CoralText}" />
+                        <Label Text="↺ RESTARTS NOW" FontFamily="NunitoBlack" FontSize="11" CharacterSpacing="1" TextColor="{DynamicResource CoralText}" />
                         <Label x:Name="ResetLabel" FontFamily="NunitoExtraBold" FontSize="13" LineHeight="1.5" TextColor="{DynamicResource Ink}" />
                     </VerticalStackLayout>
                 </Border>
             </Grid>
+
+            <Label x:Name="AmountLabel" Style="{StaticResource Overline}" Margin="0,16,0,0" />
+            <Border StrokeThickness="1.5" Stroke="{DynamicResource CardBorder}" BackgroundColor="{DynamicResource Card}"
+                    StrokeShape="RoundRectangle 16" Padding="14,4" Margin="0,8,0,0">
+                <Entry x:Name="AmountEntry" Placeholder="0" Keyboard="Numeric" MaxLength="15"
+                       TextChanged="OnAmountChanged" ReturnType="Done"
+                       SemanticProperties.Description="Amount spent on this slip. Optional; leave blank for zero."
+                       FontFamily="NunitoBold" FontSize="18" TextColor="{DynamicResource Ink}"
+                       BackgroundColor="Transparent" MinimumHeightRequest="48" />
+            </Border>
+            <Label Text="This amount comes off your savings. Leave blank if you spent nothing."
+                   FontFamily="Nunito" FontSize="13" TextColor="{DynamicResource Muted}" Margin="0,6,0,0" />
+            <Label x:Name="AmountError" IsVisible="False"
+                   Text="Enter zero or a positive amount with up to 2 decimal places. Use a comma or dot, without thousands separators."
+                   FontFamily="NunitoBold" FontSize="13" TextColor="{DynamicResource CoralText}" Margin="0,6,0,0" />
 
             <Label Text="WHAT TRIGGERED IT?  (optional)" Style="{StaticResource Overline}" Margin="0,16,0,0" />
             <FlexLayout x:Name="Chips" Wrap="Wrap" Margin="0,8,0,0" />

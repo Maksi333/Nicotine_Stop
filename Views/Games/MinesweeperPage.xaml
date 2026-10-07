@@ -6,7 +6,7 @@
              NavigationPage.HasNavigationBar="False"
              SafeAreaEdges="Container">
 
-    <Grid Padding="22,0,22,18" RowDefinitions="Auto,Auto,*,Auto,Auto">
+    <Grid x:Name="Root" Padding="22,0,22,18" RowDefinitions="Auto,Auto,*,Auto,Auto" HorizontalOptions="Center">
 
         <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="0,10,0,0">
             <Border Grid.Column="0" WidthRequest="38" HeightRequest="38" StrokeThickness="0" BackgroundColor="#1AFFFFFF" StrokeShape="RoundRectangle 19">
@@ -41,9 +41,14 @@
             </Border>
         </Grid>
 
-        <Border Grid.Row="2" StrokeThickness="0" BackgroundColor="#40000000" StrokeShape="RoundRectangle 20" Padding="10" VerticalOptions="Center">
-            <Grid x:Name="Board" RowSpacing="4" ColumnSpacing="4" />
-        </Border>
+        <!-- BoardArea is the leftover row; the board is sized against *its* width AND height in
+             code-behind, so the square never outgrows the space the rest of the page leaves. -->
+        <Grid x:Name="BoardArea" Grid.Row="2">
+            <Border StrokeThickness="0" BackgroundColor="#40000000" StrokeShape="RoundRectangle 20" Padding="10"
+                    HorizontalOptions="Center" VerticalOptions="Center">
+                <Grid x:Name="Board" RowSpacing="4" ColumnSpacing="4" />
+            </Border>
+        </Grid>
 
         <Grid Grid.Row="3" ColumnDefinitions="*,*" ColumnSpacing="10" Padding="0,14,0,0">
             <Border x:Name="DigBtn" Grid.Column="0" HeightRequest="50" StrokeThickness="0" BackgroundColor="#8B7CF6" StrokeShape="RoundRectangle 16">

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 4x2 Goal + SOS widget: small Puff, the active savings goal (name, % funded, bar, days in /
+     days to go), total-saved and time-off-nicotine chips, coral SOS button. Weighted spacers
+     (1 : 2 : 1) above, between and below the goal block and chips absorb whatever height the
+     launcher grid grants (130-233dp across devices): at the minimum they collapse to nothing, on
+     a tall cell the column stays balanced instead of pooling one blank band in the middle. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/w_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="@drawable/widget_bg"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="13dp"
+    android:paddingBottom="13dp">
+
+    <ImageView
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginEnd="12dp"
+        android:contentDescription="@null"
+        android:src="@drawable/widget_puff" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:id="@+id/w_goalname"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🎯 Weekend trip"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:textColor="@color/widget_ink" />
+            <TextView
+                android:id="@+id/w_goalpct"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="62%"
+                android:textSize="15sp"
+                android:maxLines="1"
+                android:includeFontPadding="false"
+                android:fontFamily="sans-serif-black"
+                android:textColor="@color/widget_primary" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/w_goalbar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            android:layout_marginTop="7dp"
+            android:max="100"
+            android:progress="62"
+            android:progressTint="@color/widget_fill"
+            android:progressBackgroundTint="@color/widget_track" />
+
+        <TextView
+            android:id="@+id/w_goaltime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="9 days in · 23 days to go"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="@color/widget_muted" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:minHeight="6dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/w_money3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/widget_chip_mint"
+                android:gravity="center"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:text="💰 1.240 kr"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@color/widget_primary" />
+            <TextView
+                android:id="@+id/w_clean3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/widget_chip_coral"
+                android:gravity="center"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:text="⏱ 12d 4h"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@color/widget_coral_text" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/w_sos"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="12dp"
+        android:background="@drawable/widget_sos_circle">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="SOS"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.04"
+            android:fontFamily="sans-serif-black"
+            android:textColor="#FFFFFF" />
+    </FrameLayout>
+</LinearLayout>

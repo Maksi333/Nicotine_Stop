@@ -29,10 +29,10 @@ public partial class PostSlipPage : ContentPage
     private void Build()
     {
         var s = _state.StatsNow();
-        string money = StatsCalculator.FormatMoney(s.Money, _state.Profile.Currency, false);
+        string money = StatsCalculator.FormatMoney(s.Money, _state.Profile.Currency, true);
         int best = BestStreak();
         RetainedLabel.Text =
-            $"Your {s.Days} total clean days and {money} are still yours. Best streak to beat: {best} days.";
+            $"Your clean-day counter has restarted. Net savings after slip spending: {money}. Your badges and XP stay yours. Best streak to beat: {best} days.";
 
         var counts = _state.Events
             .Where(e => e.Type == EventType.Slip && e.Trigger != Trigger.None)

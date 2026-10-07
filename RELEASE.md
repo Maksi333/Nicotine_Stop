@@ -1,4 +1,4 @@
-# Releasing SnusStop to Google Play
+# Releasing Puffy to Google Play
 
 This app targets **`net10.0-android`** only. Everything below runs from the project root
 (`Nicotine_Stop.csproj`).
@@ -8,8 +8,8 @@ This app targets **`net10.0-android`** only. Everything below runs from the proj
 You (the developer) hold the signing key — never commit it.
 
 ```bash
-keytool -genkeypair -v -keystore snusstop-upload.keystore \
-  -alias snusstop -keyalg RSA -keysize 2048 -validity 10000
+keytool -genkeypair -v -keystore puffy-upload.keystore \
+  -alias puffy -keyalg RSA -keysize 2048 -validity 10000
 ```
 
 Store the keystore file and the passwords somewhere safe (a password manager). If you lose the
@@ -30,22 +30,23 @@ Play requires an `.aab`, not an `.apk`.
 dotnet publish Nicotine_Stop.csproj -f net10.0-android -c Release \
   -p:AndroidPackageFormat=aab \
   -p:AndroidKeyStore=true \
-  -p:AndroidSigningKeyStore=snusstop-upload.keystore \
-  -p:AndroidSigningKeyAlias=snusstop \
-  -p:AndroidSigningKeyPass=env:SNUS_KEY_PASS \
-  -p:AndroidSigningStorePass=env:SNUS_STORE_PASS
+  -p:AndroidSigningKeyStore=puffy-upload.keystore \
+  -p:AndroidSigningKeyAlias=puffy \
+  -p:AndroidSigningKeyPass=env:PUFFY_KEY_PASS \
+  -p:AndroidSigningStorePass=env:PUFFY_STORE_PASS
 ```
 
-Set `SNUS_KEY_PASS` / `SNUS_STORE_PASS` as environment variables first so the passwords stay out of
+Set `PUFFY_KEY_PASS` / `PUFFY_STORE_PASS` as environment variables first so the passwords stay out of
 your shell history. The bundle lands in:
 
 ```
-bin/Release/net10.0-android/publish/dk.snusstop.app-Signed.aab
+bin/Release/net10.0-android/publish/dk.puffy.app-Signed.aab
 ```
 
 ## 4. Play Console checklist
 
-- **Package name:** `dk.snusstop.app` (permanent once published).
+- **Package name:** `dk.puffy.app` (reserved in Play Console; permanent once published). Store
+  listing name is **Puffy - Nicotine stop**; the launcher/`ApplicationTitle` name is **Puffy**.
 - **Target API:** the build targets the latest installed platform (API 36); Play's minimum-target
   requirement is met. Min SDK is **API 24**.
 - Upload the `.aab` to a **Closed testing** track first, then promote to Production.
@@ -59,7 +60,7 @@ bin/Release/net10.0-android/publish/dk.snusstop.app-Signed.aab
 
 `sqlite-net-pcl` pulls in `SQLitePCLRaw.bundle_green` → `SQLitePCLRaw.lib.e_sqlite3.android`, whose
 2.1.11 build carries advisory **GHSA-2m69-gcr7-jv3q** in the bundled native SQLite. It is **not
-reachable in this app**: SnusStop stores a single local DB, runs only its own parameterised queries,
+reachable in this app**: Puffy stores a single local DB, runs only its own parameterised queries,
 and never opens untrusted database files or SQL — the advisory requires attacker-controlled SQL/DB
 input. Track SQLitePCLRaw for a patched release and bump when available. To eliminate it now you can
 switch to the OS-provided SQLite (`SQLitePCLRaw.bundle_sqlite3`) instead of the bundled engine.

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 	<application android:allowBackup="true" android:icon="@mipmap/appicon" android:roundIcon="@mipmap/appicon_round" android:supportsRtl="true"></application>
-	<!-- No INTERNET / ACCESS_NETWORK_STATE: SnusStop is entirely offline — everything lives in a
+	<!-- No INTERNET / ACCESS_NETWORK_STATE: Puffy is entirely offline — everything lives in a
 	     local SQLite DB and nothing is ever sent anywhere. Declaring network permissions would
 	     contradict the "No data collected / No data shared" Play data-safety declaration. The
 	     .NET Android SDK still injects INTERNET into Debug builds for the debugger. -->

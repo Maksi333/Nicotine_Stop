@@ -120,7 +120,7 @@
                     </Border>
                 </VerticalStackLayout>
 
-                <Label Text="SnusStop 1.0 · Made with 💚 in Denmark" FontFamily="NunitoBold" FontSize="11.5"
+                <Label Text="Puffy 1.0 · Made with 💚 in Denmark" FontFamily="NunitoBold" FontSize="11.5"
                        TextColor="{DynamicResource Disabled}" HorizontalTextAlignment="Center" Margin="0,8,0,0" />
             </VerticalStackLayout>
         </VerticalStackLayout>
